@@ -32,6 +32,7 @@ fwupd
 git-delta
 glow
 gnome-keyring
+gptfdisk
 grex
 grim
 gsettings-desktop-schemas
