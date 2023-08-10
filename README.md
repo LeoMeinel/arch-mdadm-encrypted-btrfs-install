@@ -23,6 +23,7 @@ Meant for systems that mainly run steam and other games.
 ## Installation
 
 ```sh
+pacman -Sy
 pacman -S git
 git clone -b games https://github.com/leomeinel/arch-install.git
 chmod +x /root/arch-install/prepare.sh
