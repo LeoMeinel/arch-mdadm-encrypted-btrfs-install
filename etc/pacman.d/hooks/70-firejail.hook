@@ -10,5 +10,5 @@ Target = usr/share/applications/*.desktop
 [Action]
 Description = Configuring symlinks in /usr/local/bin...
 When = PostTransaction
-Depends = firejail
 Exec = /bin/sh -c '/etc/pacman.d/hooks/scripts/70-firejail.sh'
+Depends = firejail

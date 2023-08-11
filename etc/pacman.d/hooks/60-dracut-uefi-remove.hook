@@ -5,6 +5,9 @@ Operation = Upgrade
 Operation = Remove
 Target = usr/lib/modules/*/pkgbase
 Target = usr/src/*/dkms.conf
+Target = usr/lib/dracut/*
+Target = usr/lib/systemd/systemd
+Target = usr/lib/systemd/boot/efi/*.efi.stub
 
 [Action]
 Description = Removing unified EFI kernel images...
