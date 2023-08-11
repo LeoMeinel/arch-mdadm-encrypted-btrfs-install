@@ -1,15 +1,16 @@
 [Trigger]
+Type = Path
 Operation = Install
 Operation = Upgrade
 Operation = Remove
-Type = Package
-Target = linux
-Target = linux-lts
+Target = usr/lib/modules/*/pkgbase
+Target = usr/src/*/dkms.conf
+Target = usr/lib/dracut/*
+Target = usr/lib/systemd/systemd
+Target = usr/lib/systemd/boot/efi/*.efi.stub
 
 [Action]
-NeedsTargets
-Depends = linux
-Depends = linux-lts
 Description = Signing kernel for secure boot...
 When = PostTransaction
 Exec = /bin/sh -c '/etc/pacman.d/hooks/scripts/96-systemd-boot-sign.sh'
+NeedsTargets
