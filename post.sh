@@ -104,8 +104,9 @@ doas iptables -A INPUT -p icmp -j DROP
 ### Allow http & https
 doas iptables -A INPUT -p tcp --dport 80 -j ACCEPT
 doas iptables -A INPUT -p tcp --dport 443 -j ACCEPT
-### Allow ssh on port 9122
+### Allow ssh on port 9122 & 9123
 doas iptables -A INPUT -p tcp --dport 9122 -j ACCEPT
+doas iptables -A INPUT -p tcp --dport 9123 -j ACCEPT
 ### Allow established connections
 doas iptables -A INPUT -m state --state RELATED,ESTABLISHED -j ACCEPT
 ### Set default policies for chains
@@ -165,8 +166,9 @@ doas ip6tables -A INPUT -p icmp -j DROP
 ### Allow http & https
 doas ip6tables -A INPUT -p tcp --dport 80 -j ACCEPT
 doas ip6tables -A INPUT -p tcp --dport 443 -j ACCEPT
-### Allow ssh on port 9122
+### Allow ssh on port 9122 & 9123
 doas ip6tables -A INPUT -p tcp --dport 9122 -j ACCEPT
+doas ip6tables -A INPUT -p tcp --dport 9123 -j ACCEPT
 ### Allow established connections
 doas ip6tables -A INPUT -m state --state RELATED,ESTABLISHED -j ACCEPT
 ### Set default policies for chains
