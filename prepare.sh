@@ -334,29 +334,10 @@ reflector --save /etc/pacman.d/mirrorlist --country "$MIRRORCOUNTRIES" --protoco
 pacman -S --noprogressbar --noconfirm --needed lshw
 [[ -n "$DISK2" ]] &&
     echo "mdadm" >>"$SCRIPT_DIR/pkgs-prepare.txt"
-[[ -d "/proc/acpi/button/lid" ]] &&
-    {
-        echo "tlp"
-        echo "tlp-rdw"
-    } >>"$SCRIPT_DIR/pkgs-prepare.txt"
 lscpu | grep "Vendor ID:" | grep -q "GenuineIntel" &&
     echo "intel-ucode" >>"$SCRIPT_DIR/pkgs-prepare.txt"
 lscpu | grep "Vendor ID:" | grep -q "AuthenticAMD" &&
     echo "amd-ucode" >>"$SCRIPT_DIR/pkgs-prepare.txt"
-lshw -C display | grep "vendor:" | grep -q "Advanced Micro Devices, Inc." &&
-    {
-        echo "libva-mesa-driver"
-        echo "mesa-vdpau"
-        echo "vulkan-radeon"
-        echo "xf86-video-amdgpu"
-    } >>"$SCRIPT_DIR/pkgs-prepare.txt"
-lshw -C display | grep "vendor:" | grep -q "Intel Corporation" &&
-    {
-        echo "intel-media-driver"
-        echo "vulkan-intel"
-        echo "xf86-video-intel"
-    } >>"$SCRIPT_DIR"/pkgs-prepare.txt
-pacman -Syy
 pacstrap -K /mnt - <"$SCRIPT_DIR/pkgs-prepare.txt"
 
 # Configure /mnt/etc/fstab
@@ -377,6 +358,9 @@ genfstab -U /mnt >>/mnt/etc/fstab
         sed -i "/$STRING0/s/$STRING1/$STRING1,noauto/" "$FILE"
         ## END sed
     }
+
+# Configure /mnt/etc/resolv.conf
+ln -sf /run/systemd/resolve/stub-resolv.conf /mnt/etc/resolv.conf
 
 # Prepare /mnt/git/arch-install
 mkdir -p /mnt/git
