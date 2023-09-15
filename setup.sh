@@ -203,6 +203,9 @@ fi
 ## Create /etc/encryption/keys directory
 mkdir -p /etc/encryption/keys
 chmod 700 /etc/encryption/keys
+## Create /etc/access/keys directory
+mkdir -p /etc/access/keys
+chmod 700 /etc/access/keys
 ## Configure /etc/localtime /etc/vconsole.conf /etc/hostname /etc/hosts
 ln -sf /usr/share/zoneinfo/"$TIMEZONE" /etc/localtime
 hwclock --systohc
@@ -304,7 +307,7 @@ sed -i "s/$STRING/log_group = audit/" "$FILE"
 } >/etc/dracut.conf.d/modules.conf
 ## Configure /etc/dracut.conf.d/cmdline.conf
 DISK1P2UUID="$(blkid -s UUID -o value "$DISK1P2")"
-PARAMETERS="rd.luks.uuid=luks-$MD0UUID rd.lvm.lv=vg0/lv0 rd.md.uuid=$DISK1P2UUID root=/dev/mapper/vg0-lv0 rootfstype=btrfs rootflags=rw,noatime,compress=zstd:3,ssd,discard=async,space_cache=v2,subvolid=256,subvol=/@ rd.lvm.lv=vg0/lv1 rd.lvm.lv=vg0/lv2 rd.lvm.lv=vg0/lv3 rd.luks.allow-discards=$DISK1P2UUID rd.vconsole.unicode rd.vconsole.keymap=$KEYMAP loglevel=5 rd.info rd.shell bgrt_disable audit=1 lsm=landlock,lockdown,yama,integrity,apparmor,bpf iommu=pt zswap.enabled=0 lockdown=integrity module.sig_enforce=1"
+PARAMETERS="rd.luks.uuid=luks-$MD0UUID rd.lvm.lv=vg0/lv0 rd.md.uuid=$DISK1P2UUID root=/dev/mapper/vg0-lv0 rootfstype=btrfs rootflags=rw,noatime,compress=zstd:3,ssd,discard=async,space_cache=v2,subvolid=256,subvol=/@ rd.lvm.lv=vg0/lv1 rd.lvm.lv=vg0/lv2 rd.lvm.lv=vg0/lv3 rd.luks.allow-discards=$DISK1P2UUID rd.vconsole.unicode rd.vconsole.keymap=$KEYMAP loglevel=3 bgrt_disable audit=1 lsm=landlock,lockdown,yama,integrity,apparmor,bpf iommu=pt zswap.enabled=0 lockdown=integrity module.sig_enforce=1"
 #### If on intel set kernel parameter intel_iommu=on
 pacman -Qq "intel-ucode" >/dev/null 2>&1 &&
     PARAMETERS="${PARAMETERS} intel_iommu=on"

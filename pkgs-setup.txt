@@ -1,5 +1,6 @@
 apparmor
 arch-audit
+cmake
 bash-completion
 bat
 bc
@@ -10,7 +11,7 @@ dust
 efibootmgr
 efitools
 ethtool
-exa
+eza
 fd
 firejail
 fwupd
