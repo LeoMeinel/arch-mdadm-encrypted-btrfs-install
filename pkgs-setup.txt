@@ -4,7 +4,6 @@ apparmor
 arc-gtk-theme
 arch-audit
 ark
-autopep8
 bash-completion
 bat
 bc
