@@ -90,7 +90,6 @@ python-psutil
 qt5ct
 qt6ct
 quilt
-r
 ripgrep
 rkhunter
 sbsigntools
@@ -133,6 +132,5 @@ xdg-desktop-portal-wlr
 xdg-user-dirs
 xdg-utils
 xournalpp
-yapf
 yq
 zram-generator
