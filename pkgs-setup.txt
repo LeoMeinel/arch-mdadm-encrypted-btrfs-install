@@ -44,7 +44,6 @@ perl-rename
 postfix
 procs
 quilt
-r
 ripgrep
 rkhunter
 sbsigntools
