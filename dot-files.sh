@@ -13,20 +13,6 @@
 set -e
 
 # Set up dot-files
-case "$1" in
-setup)
-    git clone https://github.com/leomeinel/dot-files.git ~/dot-files
-    chmod +x ~/dot-files/setup.sh
-    ~/dot-files/setup.sh
-    ;;
-setup-min)
-    git clone https://github.com/leomeinel/dot-files.git ~/dot-files
-    chmod +x ~/dot-files/setup-min.sh
-    ~/dot-files/setup-min.sh
-    ;;
-vscodium)
-    git clone https://github.com/leomeinel/dot-files.git ~/dot-files
-    chmod +x ~/dot-files/exts-code.sh
-    ~/dot-files/exts-code.sh
-    ;;
-esac
+git clone https://github.com/leomeinel/dot-files.git ~/dot-files
+chmod +x ~/dot-files/setup-min.sh
+~/dot-files/setup-min.sh
