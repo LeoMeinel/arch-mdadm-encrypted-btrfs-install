@@ -1,12 +1,10 @@
 autotiling
 freetube-bin
 kvantum-theme-arc
-libreoffice-extension-languagetool
 librewolf-bin
 macchina-bin
 nwg-bar-bin
 prismlauncher-bin
-radian
 selectdefaultapplication-fork-git
 snapper-gui-git
 swaylock-effects
@@ -17,4 +15,3 @@ usbguard-notifier-git
 vscodium-bin
 vscodium-bin-marketplace
 xdg-ninja-git
-xxd-standalone
