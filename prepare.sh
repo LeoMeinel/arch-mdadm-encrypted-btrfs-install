@@ -337,6 +337,7 @@ sed -i "s/$STRING/NoProgressBar/" "$FILE"
     echo "Include = /etc/pacman.d/mirrorlist"
 } >>/etc/pacman.conf
 reflector --save /etc/pacman.d/mirrorlist --country "$MIRRORCOUNTRIES" --protocol https --latest 20 --sort rate
+pacman -Syy
 pacman -S --noprogressbar --noconfirm --needed lshw
 [[ -n "$DISK2" ]] &&
     echo "mdadm" >>"$SCRIPT_DIR/pkgs-prepare.txt"
@@ -362,7 +363,6 @@ lshw -C display | grep "vendor:" | grep -q "Intel Corporation" &&
         echo "vulkan-intel"
         echo "xf86-video-intel"
     } >>"$SCRIPT_DIR"/pkgs-prepare.txt
-pacman -Syy
 pacstrap -K /mnt - <"$SCRIPT_DIR/pkgs-prepare.txt"
 
 # Configure /mnt/etc/fstab

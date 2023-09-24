@@ -183,7 +183,9 @@ pacman -Syu --noprogressbar --noconfirm --needed - <"$SCRIPT_DIR/pkgs-setup.txt"
 pacman -Qq "apparmor" >/dev/null 2>&1 &&
     DEPENDENCIES+=$'\npython-notify2'
 pacman -Qq "lollypop" >/dev/null 2>&1 &&
-    DEPENDENCIES+=$'\ngst-plugins-base\ngst-plugins-good\ngst-libav\neasytag\nkid3-qt\nyoutube-dl'
+    DEPENDENCIES+=$'\ngst-plugins-base\ngst-plugins-good\ngst-libav\neasytag\nkid3-qt'
+pacman -Qq "mpv" >/dev/null 2>&1 &&
+    DEPENDENCIES+=$'\nyt-dlp'
 pacman -Qq "steam" >/dev/null 2>&1 &&
     DEPENDENCIES+=$'\nlib32-mesa\nttf-liberation'
 pacman -Qq "system-config-printer" >/dev/null 2>&1 &&
