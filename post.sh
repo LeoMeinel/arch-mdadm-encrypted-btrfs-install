@@ -213,7 +213,6 @@ YES)
         echo '        doas umount -AR /efi'
         echo '    fi'
         echo '    doas mount /efi'
-        echo '    doas cryptboot-efikeys enroll'
         echo '    doas cryptboot systemd-boot-sign'
         echo '    doas sh -c "{'
         echo '        echo "uefi_secureboot_cert=\""$EFI_KEYS_DIR"/db.crt\""'
