@@ -214,6 +214,8 @@ pacman -Qq "pipewire" >/dev/null 2>&1 &&
 pacman -Qq "r" >/dev/null 2>&1 &&
     DEPENDENCIES+=$'\nblas-openblas'
 pacman -S --noprogressbar --noconfirm --asdeps - <<<"$DEPENDENCIES"
+## Install flatpaks
+xargs -n 1 flatpak install --system -y --noninteractive <"$SCRIPT_DIR/pkgs-flatpak.txt"
 
 # Configure $SYSUSER
 ## Run sysuser.sh

@@ -1,0 +1,4 @@
+com.github.Matoking.protontricks
+com.valvesoftware.Steam
+com.valvesoftware.Steam.CompatibilityTool.Proton-GE
+org.winehq.Wine/x86_64/stable-23.08

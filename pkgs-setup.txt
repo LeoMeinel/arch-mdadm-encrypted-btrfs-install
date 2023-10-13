@@ -18,6 +18,7 @@ cups
 dbus
 devtools
 dosfstools
+dotnet-runtime
 duf
 dust
 efibootmgr
@@ -88,9 +89,9 @@ pipewire-jack
 polkit-gnome
 postfix
 procs
-qemu-desktop
 python-pip
 python-psutil
+qemu-desktop
 qt5ct
 qt6ct
 quilt
