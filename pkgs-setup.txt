@@ -14,7 +14,6 @@ ethtool
 eza
 fd
 firejail
-flatpak
 fwupd
 git-delta
 glow
