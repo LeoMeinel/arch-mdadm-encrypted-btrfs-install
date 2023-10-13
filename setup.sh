@@ -43,8 +43,10 @@ grep -q "$STRING" "$FILE" || sed_exit
 sed -i "s/$STRING/SHELL=\/bin\/bash/" "$FILE"
 ## END sed
 groupadd -r audit
+groupadd -r libvirt
 groupadd -r usbguard
 useradd -ms /bin/bash -G adm,audit,log,rfkill,sys,systemd-journal,usbguard,wheel,video "$SYSUSER"
+useradd -ms /bin/bash -G libvirt,video "$VIRTUSER"
 useradd -ms /bin/bash -G video "$HOMEUSER"
 useradd -ms /bin/bash -G video "$GUESTUSER"
 echo "#################################################################"
@@ -64,6 +66,8 @@ echo "Enter password for root"
 passwd root
 echo "Enter password for $SYSUSER"
 passwd "$SYSUSER"
+echo "Enter password for $VIRTUSER"
+passwd "$VIRTUSER"
 echo "Enter password for $HOMEUSER"
 passwd "$HOMEUSER"
 echo "Enter password for $GUESTUSER"
@@ -92,6 +96,7 @@ chmod 644 /etc/NetworkManager/conf.d/50-mac-random.conf
     echo ''
     echo '/usr/bin/firecfg >/dev/null 2>&1'
     echo "/usr/bin/su -c '/usr/bin/rm -rf ~/.local/share/applications/*' $SYSUSER"
+    echo "/usr/bin/su -c '/usr/bin/rm -rf ~/.local/share/applications/*' $VIRTUSER"
     echo "/usr/bin/su -c '/usr/bin/rm -rf ~/.local/share/applications/*' $HOMEUSER"
     echo "/usr/bin/su -c '/usr/bin/rm -rf ~/.local/share/applications/*' $GUESTUSER"
 } >/etc/pacman.d/hooks/scripts/70-firejail.sh
@@ -167,12 +172,6 @@ STRING="^#CacheDir"
 grep -q "$STRING" "$FILE" || sed_exit
 sed -i "s/$STRING/CacheDir/" "$FILE"
 ### END sed
-{
-    echo ""
-    echo "# Custom"
-    echo "[multilib]"
-    echo "Include = /etc/pacman.d/mirrorlist"
-} >>/etc/pacman.conf
 pacman-key --init
 ## Update mirrors
 reflector --save /etc/pacman.d/mirrorlist --country "$MIRRORCOUNTRIES" --protocol https --latest 20 --sort rate
@@ -580,6 +579,8 @@ pacman -Qq "bluez" >/dev/null 2>&1 &&
     systemctl enable bluetooth.service
 pacman -Qq "cups" >/dev/null 2>&1 &&
     systemctl enable cups.service
+pacman -Qq "libvirt" >/dev/null 2>&1 &&
+    systemctl enable libvirtd.service
 pacman -Qq "logwatch" >/dev/null 2>&1 &&
     systemctl enable logwatch.timer
 pacman -Qq "networkmanager" >/dev/null 2>&1 &&

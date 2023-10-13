@@ -15,3 +15,4 @@ usbguard-notifier-git
 vscodium-bin
 vscodium-bin-marketplace
 xdg-ninja-git
+xxd-standalone

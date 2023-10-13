@@ -42,6 +42,7 @@ gutenprint
 htop
 hwinfo
 hyperfine
+inetutils
 jdk-openjdk
 jdk17-openjdk
 jdk8-openjdk
@@ -54,6 +55,7 @@ libjxl
 libopenraw
 librsvg
 libsecret
+libvirt
 libwmf
 logrotate
 logwatch
@@ -86,6 +88,7 @@ pipewire-jack
 polkit-gnome
 postfix
 procs
+qemu-desktop
 python-pip
 python-psutil
 qt5ct
@@ -103,7 +106,6 @@ snap-pac
 snapper
 sshfs
 starship
-steam
 sway
 swaybg
 swayidle
@@ -122,6 +124,7 @@ unzip
 usbguard
 usbutils
 viewnior
+virt-manager
 waybar
 webp-pixbuf-loader
 wget

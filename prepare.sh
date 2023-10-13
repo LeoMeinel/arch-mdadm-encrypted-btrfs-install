@@ -332,12 +332,6 @@ STRING="^#NoProgressBar"
 grep -q "$STRING" "$FILE" || sed_exit
 sed -i "s/$STRING/NoProgressBar/" "$FILE"
 ## END sed
-{
-    echo ""
-    echo "# Custom"
-    echo "[multilib]"
-    echo "Include = /etc/pacman.d/mirrorlist"
-} >>/etc/pacman.conf
 reflector --save /etc/pacman.d/mirrorlist --country "$MIRRORCOUNTRIES" --protocol https --latest 20 --sort rate
 pacman -Syy
 pacman -S --noprogressbar --noconfirm --needed lshw
