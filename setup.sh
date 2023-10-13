@@ -183,6 +183,8 @@ pacman -Syu --noprogressbar --noconfirm --needed - <"$SCRIPT_DIR/pkgs-setup.txt"
 DEPENDENCIES=""
 pacman -Qq "apparmor" >/dev/null 2>&1 &&
     DEPENDENCIES+=$'\npython-notify2'
+pacman -Qq "docker" >/dev/null 2>&1 &&
+    DEPENDENCIES+=$'\ndocker-scan'
 pacman -Qq "libvirt" >/dev/null 2>&1 &&
     DEPENDENCIES+=$'\ndnsmasq'
 pacman -Qq "lollypop" >/dev/null 2>&1 &&
