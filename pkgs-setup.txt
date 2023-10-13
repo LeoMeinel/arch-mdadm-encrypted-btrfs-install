@@ -7,7 +7,6 @@ ark
 bash-completion
 bat
 bc
-blas-openblas
 bleachbit
 blueman
 bluez
