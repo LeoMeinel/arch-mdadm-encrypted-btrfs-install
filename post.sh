@@ -49,7 +49,7 @@ doas su -lc '/dot-files.sh setup-min' root
 doas timedatectl set-ntp true
 
 # Set default java
-doas archlinux-java set java-17-openjdk
+doas archlinux-java set java-21-openjdk
 
 # Configure iptables
 # FIXME: Replace with nftables
