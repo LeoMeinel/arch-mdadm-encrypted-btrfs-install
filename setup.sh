@@ -620,7 +620,7 @@ pacman -Qq "util-linux" >/dev/null 2>&1 &&
 
 # Setup /boot & /efi
 bootctl --esp-path=/efi --no-variables install
-dracut --regenerate-all
+dracut --regenerate-all --force
 
 # Remove repo
 rm -rf /git

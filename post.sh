@@ -305,9 +305,13 @@ doas sed -i "/$STRING/a BatchInstall" "$FILE"
 ## END sed
 
 # Install packages
+## AUR packages
 paru -S --noprogressbar --noconfirm --needed - <"$SCRIPT_DIR/pkgs-post.txt"
 paru -Syu --noprogressbar --noconfirm
 paru -Scc
+## Update flatpaks
+[[ -n $(which flatpak) ]] >/dev/null 2>&1 &&
+    flatpak update --system -y --noninteractive
 
 # Clean firecfg
 doas firecfg --clean
