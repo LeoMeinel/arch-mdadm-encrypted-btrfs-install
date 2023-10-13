@@ -124,6 +124,8 @@ YES)
         echo "ERROR: Drive not suitable for installation!"
         exit 1
     fi
+    ## Deactivate all vgs
+    vgchange -an
     ## Detect, close & erase old crypt volumes
     if lsblk -rno TYPE "$DISK1" | grep -q "crypt"; then
         OLD_CRYPT_0="$(lsblk -Mrno TYPE,NAME "$DISK1" | grep "crypt" | sed 's/crypt//' | sed -n '1p' | tr -d "[:space:]")"
@@ -250,7 +252,7 @@ mount_subs0() {
 mount_subs1() {
     for ((a = 0; a < SUBVOLUMES_LENGTH; a++)); do
         if [[ "${SUBVOLUMES[$a]}" != "$1" ]] && grep -nq "^$1" <<<"${SUBVOLUMES[$a]}"; then
-            if grep -nq "^${1}lib/" <<<"${SUBVOLUMES[$a]}"; then
+            if grep -nq "^${1}lib/" <<<"${SUBVOLUMES[$a]}" && ! grep -nq "^${1}lib/flatpak/" <<<"${SUBVOLUMES[$a]}"; then
                 mount --mkdir -o "$OPTIONS3${CONFIGS[$a]}" "$3" "/mnt${SUBVOLUMES[$a]}"
             else
                 mount --mkdir -o "$2${CONFIGS[$a]}" "$3" "/mnt${SUBVOLUMES[$a]}"
@@ -278,9 +280,9 @@ for ((i = 0; i < SUBVOLUMES_LENGTH; i++)); do
 done
 chmod 775 /mnt/var/games
 ## /efi
-mount --mkdir -o noexec,nodev,nosuid "$DISK1P1" /mnt/efi
+mount --mkdir -o noexec,nodev,nosuid,noatime,fmask=0077,dmask=0077 "$DISK1P1" /mnt/efi
 [[ -n "$DISK2" ]] &&
-    mount --mkdir -o noexec,nodev,nosuid "$DISK2P1" /mnt/.efi.bak
+    mount --mkdir -o noexec,nodev,nosuid,noatime,fmask=0077,dmask=0077 "$DISK2P1" /mnt/.efi.bak
 ## /boot
 mkdir -p /mnt/boot
 

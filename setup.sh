@@ -26,16 +26,16 @@ sed_exit() {
 # Add groups & users
 ## Configure passwords
 {
-    echo "#%PAM-1.0"
-    echo "password required pam_pwquality.so sha512 rounds=9999999 shadowretry=3 minlen=12 difok=6 dcredit=-1 ucredit=-1 ocredit=-1 lcredit=-1 enforce_for_root"
-    echo "password required pam_unix.so use_authtok sha512 shadow"
+    echo "# passwd defaults from arch-install"
+    echo "password required pam_pwquality.so shadowretry=3 minlen=12 difok=6 dcredit=-1 ucredit=-1 ocredit=-1 lcredit=-1 enforce_for_root"
+    echo "password required pam_unix.so use_authtok shadow"
 } >/etc/pam.d/passwd
-{
-    echo ""
-    echo "# Custom"
-    echo "SHA_CRYPT_MIN_ROUNDS 9999999"
-    echo "SHA_CRYPT_MAX_ROUNDS 9999999"
-} >>/etc/login.defs
+## FIXME: Add below after support has been implemented
+##{
+##    echo ""
+##    echo "# Custom"
+##    echo "YESCRYPT_COST_FACTOR 11"
+##} >>/etc/login.defs
 ## START sed
 FILE=/etc/default/useradd
 STRING="^SHELL=.*"
@@ -180,14 +180,19 @@ reflector --save /etc/pacman.d/mirrorlist --country "$MIRRORCOUNTRIES" --protoco
 # Install packages
 pacman -Syu --noprogressbar --noconfirm --needed - <"$SCRIPT_DIR/pkgs-setup.txt"
 ## Install optional dependencies
+DEPENDENCIES=""
 pacman -Qq "apparmor" >/dev/null 2>&1 &&
     DEPENDENCIES+=$'\npython-notify2'
+pacman -Qq "libvirt" >/dev/null 2>&1 &&
+    DEPENDENCIES+=$'\ndnsmasq'
 pacman -Qq "lollypop" >/dev/null 2>&1 &&
     DEPENDENCIES+=$'\ngst-plugins-base\ngst-plugins-good\ngst-libav\neasytag\nkid3-qt'
 pacman -Qq "mpv" >/dev/null 2>&1 &&
     DEPENDENCIES+=$'\nyt-dlp'
-pacman -Qq "steam" >/dev/null 2>&1 &&
-    DEPENDENCIES+=$'\nlib32-mesa\nttf-liberation'
+pacman -Qq "python" >/dev/null 2>&1 &&
+    DEPENDENCIES+=$'\nflake8\nmpdecimal\npython-black\npython-pip\npython-psutil\npython-pylint\npython-pytest\npython-setuptools\npython-virtualenv\nsqlite'
+pacman -Qq "r" >/dev/null 2>&1 &&
+    DEPENDENCIES+=$'\ngcc-fortran\ntk'
 pacman -Qq "system-config-printer" >/dev/null 2>&1 &&
     DEPENDENCIES+=$'\ncups-pk-helper'
 pacman -Qq "thunar" >/dev/null 2>&1 &&
@@ -202,8 +207,12 @@ pacman -Qq "wlroots" >/dev/null 2>&1 &&
     DEPENDENCIES+=$'\nxorg-xwayland'
 pacman -S --noprogressbar --noconfirm --needed --asdeps - <<<"$DEPENDENCIES"
 ## Reinstall pipewire plugins as dependencies
+DEPENDENCIES=""
 pacman -Qq "pipewire" >/dev/null 2>&1 &&
-    pacman -S --noprogressbar --noconfirm --asdeps pipewire-alsa pipewire-jack pipewire-pulse
+    DEPENDENCIES+=$'\npipewire-alsa\npipewire-jack\npipewire-pulse'
+pacman -Qq "r" >/dev/null 2>&1 &&
+    DEPENDENCIES+=$'\nblas-openblas'
+pacman -S --noprogressbar --noconfirm --asdeps - <<<"$DEPENDENCIES"
 
 # Configure $SYSUSER
 ## Run sysuser.sh
@@ -367,6 +376,10 @@ sed -i "s/$STRING/AutoEnable=true/" "$FILE"
     echo 'important_packages = ["dracut", "linux", "linux-lts", "linux-zen"]'
     echo ""
     echo "[var_lib_docker]"
+    echo "snapshot = True"
+    echo 'important_packages = ["dracut", "linux", "linux-lts", "linux-zen"]'
+    echo ""
+    echo "[var_lib_flatpak]"
     echo "snapshot = True"
     echo 'important_packages = ["dracut", "linux", "linux-lts", "linux-zen"]'
     echo ""
@@ -600,11 +613,7 @@ pacman -Qq "util-linux" >/dev/null 2>&1 &&
     systemctl enable fstrim.timer
 
 # Setup /boot & /efi
-if udevadm info -q property --property=ID_BUS --value "$DISK1" | grep -q "usb"; then
-    bootctl --esp-path=/efi --no-variables install
-else
-    bootctl --esp-path=/efi install
-fi
+bootctl --esp-path=/efi --no-variables install
 dracut --regenerate-all
 
 # Remove repo

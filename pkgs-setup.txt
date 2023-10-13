@@ -29,6 +29,7 @@ fd
 ffmpeg
 firefox
 firejail
+flatpak
 fwupd
 git-delta
 glow
