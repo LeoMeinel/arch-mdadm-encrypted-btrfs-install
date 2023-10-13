@@ -25,31 +25,15 @@ sed_exit() {
 
 # Configure $KEYMAP
 doas localectl --no-convert set-keymap "$KEYMAP"
-doas localectl --no-convert set-x11-keymap "$KEYLAYOUT"
-
-# Initialize Firefox
-## Don't fail on error
-set +e
-## Initialization
-timeout 5 firefox --headless
-doas su -c 'timeout 5 firefox --headless' "$VIRTUSER"
-doas su -c 'timeout 5 firefox --headless' "$HOMEUSER"
-doas su -c 'timeout 5 firefox --headless' "$GUESTUSER"
-## Fail on error
-set -e
 
 # Configure dot-files (setup)
-/dot-files.sh setup
-doas su -lc '/dot-files.sh setup' "$VIRTUSER"
-doas su -lc '/dot-files.sh setup' "$HOMEUSER"
-doas su -lc '/dot-files.sh setup' "$GUESTUSER"
-doas su -lc '/dot-files.sh setup-min' root
+/dot-files.sh
+doas su -lc '/dot-files.sh' "$DOCKUSER"
+doas su -lc '/dot-files.sh' "$HOMEUSER"
+doas su -lc '/dot-files.sh' root
 
 # Configure clock
 doas timedatectl set-ntp true
-
-# Set default java
-doas archlinux-java set java-17-openjdk
 
 # Configure iptables
 # FIXME: Replace with nftables
@@ -117,22 +101,12 @@ doas iptables -A INPUT -p tcp -m state --state NEW -m tcpmss ! --mss 536:65535 -
 doas iptables -A INPUT -s 127.0.0.0/8 ! -i lo -j DROP
 ### Drop ICMP
 doas iptables -A INPUT -p icmp -j DROP
-### Allow SMTP
-doas iptables -A INPUT -p tcp --dport 25 -j ACCEPT
-doas iptables -A INPUT -p tcp --dport 587 -j ACCEPT
-### Allow POP & POPS
-doas iptables -A INPUT -p tcp --dport 110 -j ACCEPT
-doas iptables -A INPUT -p tcp --dport 995 -j ACCEPT
-### Allow IMAP & IMAPS
-doas iptables -A INPUT -p tcp --dport 143 -j ACCEPT
-doas iptables -A INPUT -p tcp --dport 993 -j ACCEPT
-### Allow mDNS
-doas iptables -A INPUT -p udp --dport 5353 -j ACCEPT
-### Allow http & https (for wget)
+### Allow http & https
 doas iptables -A INPUT -p tcp --dport 80 -j ACCEPT
 doas iptables -A INPUT -p tcp --dport 443 -j ACCEPT
-### Allow Transmission
-doas iptables -A INPUT -p udp --dport 51413 -j ACCEPT
+### Allow ssh on port 9122 & 9123
+doas iptables -A INPUT -p tcp --dport 9122 -j ACCEPT
+doas iptables -A INPUT -p tcp --dport 9123 -j ACCEPT
 ### Allow established connections
 doas iptables -A INPUT -m state --state RELATED,ESTABLISHED -j ACCEPT
 ### Set default policies for chains
@@ -189,22 +163,12 @@ doas ip6tables -A INPUT -p tcp -m state --state NEW -m tcpmss ! --mss 536:65535 
 doas ip6tables -A INPUT -s ::1/128 ! -i lo -j DROP
 ### Drop ICMP
 doas ip6tables -A INPUT -p icmp -j DROP
-### Allow SMTP
-doas ip6tables -A INPUT -p tcp --dport 25 -j ACCEPT
-doas ip6tables -A INPUT -p tcp --dport 587 -j ACCEPT
-### Allow POP & POPS
-doas ip6tables -A INPUT -p tcp --dport 110 -j ACCEPT
-doas ip6tables -A INPUT -p tcp --dport 995 -j ACCEPT
-### Allow IMAP & IMAPS
-doas ip6tables -A INPUT -p tcp --dport 143 -j ACCEPT
-doas ip6tables -A INPUT -p tcp --dport 993 -j ACCEPT
-### Allow mDNS
-doas ip6tables -A INPUT -p udp --dport 5353 -j ACCEPT
-### Allow http & https (for wget)
+### Allow http & https
 doas ip6tables -A INPUT -p tcp --dport 80 -j ACCEPT
 doas ip6tables -A INPUT -p tcp --dport 443 -j ACCEPT
-### Allow Transmission
-doas ip6tables -A INPUT -p udp --dport 51413 -j ACCEPT
+### Allow ssh on port 9122 & 9123
+doas ip6tables -A INPUT -p tcp --dport 9122 -j ACCEPT
+doas ip6tables -A INPUT -p tcp --dport 9123 -j ACCEPT
 ### Allow established connections
 doas ip6tables -A INPUT -m state --state RELATED,ESTABLISHED -j ACCEPT
 ### Set default policies for chains
@@ -312,12 +276,6 @@ paru -Scc
 # Clean firecfg
 doas firecfg --clean
 
-# Configure dot-files (vscodium)
-/dot-files.sh vscodium
-doas su -lc '/dot-files.sh vscodium' "$VIRTUSER"
-doas su -lc '/dot-files.sh vscodium' "$HOMEUSER"
-doas su -lc '/dot-files.sh vscodium' "$GUESTUSER"
-
 # Configure firejail
 ## START sed
 FILE=/etc/firejail/firecfg.config
@@ -327,13 +285,12 @@ for string in "${STRINGS[@]}"; do
     doas sed -i "s/^$string$/#$string #arch-install/" "$FILE"
 done
 ## END sed
-doas firecfg --add-users root "$SYSUSER" "$VIRTUSER" "$HOMEUSER" "$GUESTUSER"
+doas firecfg --add-users root "$SYSUSER" "$DOCKUSER" "$HOMEUSER"
 doas apparmor_parser -r /etc/apparmor.d/firejail-default
 doas firecfg
 rm -rf ~/.local/share/applications/*
-doas su -c 'rm -rf ~/.local/share/applications/*' "$VIRTUSER"
+doas su -c 'rm -rf ~/.local/share/applications/*' "$DOCKUSER"
 doas su -c 'rm -rf ~/.local/share/applications/*' "$HOMEUSER"
-doas su -c 'rm -rf ~/.local/share/applications/*' "$GUESTUSER"
 
 # Enable systemd services
 pacman -Qq "iptables" >/dev/null 2>&1 &&
@@ -341,10 +298,6 @@ pacman -Qq "iptables" >/dev/null 2>&1 &&
         doas systemctl enable ip6tables
         doas systemctl enable iptables
     }
-
-# Enable systemd user services
-pacman -Qq "usbguard-notifier" >/dev/null 2>&1 &&
-    systemctl enable --user usbguard-notifier.service
 
 # Remove repo
 rm -rf ~/git
