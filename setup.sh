@@ -354,6 +354,9 @@ chmod 644 /etc/dracut.conf.d/*.conf
     echo "# Custom"
     echo "* hard core 0"
 } >>/etc/security/limits.conf
+### Harden Postfix
+postconf -e disable_vrfy_command=yes
+postconf -e inet_interfaces=loopback-only
 ### chmod & touch files
 FILES_600=("/etc/at.deny" "/etc/anacrontab" "/etc/cron.deny" "/etc/crontab" "/etc/ssh/sshd_config" "/root/.rhosts" "/root/.rlogin" "/root/.shosts" "/etc/audit/rules.d/custom.rules")
 FILES_644=("/etc/hosts.allow" "/etc/hosts.deny" "/etc/hosts.equiv" "/etc/issue" "/etc/issue.net" "/etc/motd" "/etc/shosts.equiv")
