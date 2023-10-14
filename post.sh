@@ -305,8 +305,6 @@ doas sed -i "/$STRING/a BatchInstall" "$FILE"
 ## END sed
 
 # Install packages
-## Restart gpg-agent
-gpgconf --kill gpg-agent
 ## AUR packages
 paru -S --noprogressbar --noconfirm --needed - <"$SCRIPT_DIR/pkgs-post.txt"
 paru -Syu --noprogressbar --noconfirm
