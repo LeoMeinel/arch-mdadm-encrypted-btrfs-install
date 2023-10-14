@@ -19,4 +19,4 @@ for process in "${PROCESSES[@]}"; do
     pkill -u $UID "${process}"
 done
 
-swaymsg exit
+exec swaymsg exit
