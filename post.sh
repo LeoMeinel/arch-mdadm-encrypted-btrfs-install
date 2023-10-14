@@ -305,6 +305,12 @@ doas sed -i "/$STRING/a BatchInstall" "$FILE"
 ## END sed
 
 # Install packages
+## FIXME: Hack to avoid gnupg errors
+{
+    echo "disable-ipv6"
+    echo "standard-resolver"
+} >"$GNUPGHOME"/dirmgr.conf
+gpgconf --kill all
 ## AUR packages
 paru -S --noprogressbar --noconfirm --needed - <"$SCRIPT_DIR/pkgs-post.txt"
 paru -Syu --noprogressbar --noconfirm
@@ -337,6 +343,7 @@ rm -rf ~/git
 # Remove scripts
 doas rm -f /dot-files.sh
 doas rm -f /root/.bash_history
+rm -f "$GNUPGHOME"/dirmgr.conf
 rm -f ~/.bash_history
 rm -f "$SCRIPT_DIR/pkgs-post.txt"
 rm -f "$SCRIPT_DIR/post.sh"
