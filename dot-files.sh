@@ -27,6 +27,5 @@ setup-min)
 vscodium)
     git clone https://github.com/leomeinel/dot-files.git ~/dot-files
     chmod +x ~/dot-files/exts-code.sh
-    ~/dot-files/exts-code.sh
     ;;
 esac
