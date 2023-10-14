@@ -54,7 +54,7 @@ reboot
 reboot
 ```
 
-:information_source: | Log into $SYSUSER account on tty1, open alacritty with `SUPER+D` and run:
+:information_source: | Log into $SYSUSER account on tty1, open alacritty with `SUPER+ENTER` and run:
 
 ```sh
 ~/post-gui.sh
