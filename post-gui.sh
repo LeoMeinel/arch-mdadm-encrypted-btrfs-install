@@ -43,5 +43,6 @@ doas su -c 'rm -rf ~/.local/share/applications/*' "$HOMEUSER"
 doas su -c 'rm -rf ~/.local/share/applications/*' "$GUESTUSER"
 
 # Remove scripts
+rm -f ~/.bash_history
 rm -f "$SCRIPT_DIR/install.conf"
 rm -f "$SCRIPT_DIR/post-gui.sh"
