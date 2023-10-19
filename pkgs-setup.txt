@@ -138,4 +138,5 @@ xdg-user-dirs
 xdg-utils
 xournalpp
 yq
+zenity
 zram-generator
