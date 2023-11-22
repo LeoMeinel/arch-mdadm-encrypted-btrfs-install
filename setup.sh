@@ -450,16 +450,19 @@ ln -s "$(which nvim)" /usr/local/bin/edit
 ln -s "$(which nvim)" /usr/local/bin/vedit
 ln -s "$(which nvim)" /usr/local/bin/vi
 ln -s "$(which nvim)" /usr/local/bin/vim
+chmod 755 /usr/local/bin/edit
 chmod 755 /usr/local/bin/ex
+chmod 755 /usr/local/bin/freetube
+chmod 755 /usr/local/bin/prismlauncher
 chmod 755 /usr/local/bin/protontricks
 chmod 755 /usr/local/bin/steam
 chmod 755 /usr/local/bin/sway-logout
-chmod 755 /usr/local/bin/view
-chmod 755 /usr/local/bin/vimdiff
-chmod 755 /usr/local/bin/edit
+chmod 755 /usr/local/bin/trilium
 chmod 755 /usr/local/bin/vedit
 chmod 755 /usr/local/bin/vi
+chmod 755 /usr/local/bin/view
 chmod 755 /usr/local/bin/vim
+chmod 755 /usr/local/bin/vimdiff
 chmod 755 /usr/local/bin/wine
 
 # Configure /usr
