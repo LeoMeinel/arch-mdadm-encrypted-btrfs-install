@@ -1,15 +1,12 @@
 autotiling
-freetube-bin
 kvantum-theme-arc
 librewolf-bin
 macchina-bin
 nwg-bar-bin
-prismlauncher-bin
 selectdefaultapplication-fork-git
 snapper-gui-git
 swaylock-effects
 swaync
-trilium-bin
 ttf-hasklig
 usbguard-notifier-git
 vscodium-bin

@@ -1,4 +1,7 @@
 com.github.Matoking.protontricks
+com.github.zadam.trilium
 com.valvesoftware.Steam
 com.valvesoftware.Steam.CompatibilityTool.Proton-GE
+io.freetubeapp.FreeTube
+org.prismlauncher.PrismLauncher
 org.winehq.Wine/x86_64/stable-23.08
