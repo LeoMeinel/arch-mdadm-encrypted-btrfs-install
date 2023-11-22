@@ -390,7 +390,6 @@ ln -s "$(which nvim)" /usr/local/bin/vi
 ln -s "$(which nvim)" /usr/local/bin/vim
 chmod 755 /usr/local/bin/edit
 chmod 755 /usr/local/bin/ex
-chmod 755 /usr/local/bin/sway-logout
 chmod 755 /usr/local/bin/vedit
 chmod 755 /usr/local/bin/vi
 chmod 755 /usr/local/bin/view
