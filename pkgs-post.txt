@@ -1,17 +1,3 @@
-autotiling
-kvantum-theme-arc
-libreoffice-extension-languagetool
-librewolf-bin
 macchina-bin
-nwg-bar-bin
-radian
-selectdefaultapplication-fork-git
-snapper-gui-git
-swaylock-effects
-swaync
-ttf-hasklig
-usbguard-notifier-git
-vscodium-bin
-vscodium-bin-marketplace
 xdg-ninja-git
 xxd-standalone
