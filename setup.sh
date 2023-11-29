@@ -261,23 +261,6 @@ echo "$HOSTNAME" >/etc/hostname
 git clone https://github.com/leomeinel/cryptboot.git /git/cryptboot
 cp /git/cryptboot/cryptboot.conf /etc/
 chmod 644 /etc/cryptboot.conf
-## Configure /etc/ssh/sshd_config
-{
-    echo ""
-    echo "# Override"
-    echo "PasswordAuthentication no"
-    echo "AuthenticationMethods publickey"
-    echo "PermitRootLogin no"
-    echo "AllowTcpForwarding no"
-    echo "ClientAliveCountMax 2"
-    echo "LogLevel VERBOSE"
-    echo "MaxAuthTries 3"
-    echo "MaxSessions 2"
-    echo "Port 9122"
-    echo "TCPKeepAlive no"
-    echo "AllowAgentForwarding no"
-    echo "Banner /etc/issue.net"
-} >>/etc/ssh/sshd_config
 ## Configure /etc/xdg/user-dirs.defaults
 ### START sed
 FILE=/etc/xdg/user-dirs.defaults
