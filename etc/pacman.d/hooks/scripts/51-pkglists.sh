@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 ###
 # File: 51-pkglists.sh
 # Author: Leopold Meinel (leo@meinel.dev)

@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 ###
 # File: post.sh
 # Author: Leopold Meinel (leo@meinel.dev)
@@ -202,7 +202,7 @@ YES)
     ;;
 *)
     {
-        echo '#!/bin/bash'
+        echo '#!/usr/bin/env bash'
         echo ''
         echo 'source "/etc/cryptboot.conf"'
         echo 'read -rp "Have you transferred your keys to $EFI_KEYS_DIR? (Type '"'"'yes'"'"' in capital letters): " choice'
