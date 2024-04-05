@@ -1,3 +1,2 @@
 macchina-bin
 xdg-ninja-git
-xxd-standalone
