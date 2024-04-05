@@ -3,7 +3,7 @@
 # File: prepare.sh
 # Author: Leopold Meinel (leo@meinel.dev)
 # -----
-# Copyright (c) 2023 Leopold Meinel & contributors
+# Copyright (c) 2024 Leopold Meinel & contributors
 # SPDX ID: GPL-3.0-or-later
 # URL: https://www.gnu.org/licenses/gpl-3.0-standalone.html
 # -----
@@ -168,18 +168,17 @@ if [[ -n "$DISK2" ]]; then
     DISK2P1="$(lsblk -rnpo TYPE,NAME "$DISK2" | grep "part" | sed 's/part//' | sed -n '1p' | tr -d "[:space:]")"
     DISK2P2="$(lsblk -rnpo TYPE,NAME "$DISK2" | grep "part" | sed 's/part//' | sed -n '2p' | tr -d "[:space:]")"
     ## Configure raid1
-    mdadm --create --verbose --level=1 --metadata=1.2 --raid-devices=2 --homehost=any --name=md0 /dev/md/md0 "$DISK1P2" "$DISK2P2"
+    RAID_DEVICE=/dev/md/md0
+    mdadm --create --verbose --level=1 --metadata=1.2 --raid-devices=2 --homehost=any --name=md0 "$RAID_DEVICE" "$DISK1P2" "$DISK2P2"
     ## Configure encryption
-    cryptsetup open --type plain -d /dev/urandom /dev/md/md0 to_be_wiped
-    cryptsetup close to_be_wiped
-    cryptsetup -y -v -h sha512 -s 512 luksFormat --type luks2 /dev/md/md0
-    cryptsetup open --type luks2 --perf-no_read_workqueue --perf-no_write_workqueue --persistent /dev/md/md0 md0_crypt
+    dd if=/dev/urandom of="$RAID_DEVICE" bs="$(stat -c "%o" "$RAID_DEVICE")" status=progress
+    cryptsetup -y -v luksFormat "$RAID_DEVICE"
+    cryptsetup open "$RAID_DEVICE" md0_crypt
 else
     ## Configure encryption
-    cryptsetup open --type plain -d /dev/urandom "$DISK1P2" to_be_wiped
-    cryptsetup close to_be_wiped
-    cryptsetup -y -v -h sha512 -s 512 luksFormat --type luks2 "$DISK1P2"
-    cryptsetup open --type luks2 "$DISK1P2" md0_crypt
+    dd if=/dev/urandom of="$DISK1P2" bs="$(stat -c "%o" "$DISK1P2")" status=progress
+    cryptsetup -y -v luksFormat "$DISK1P2"
+    cryptsetup open "$DISK1P2" md0_crypt
 fi
 
 # Configure lvm
