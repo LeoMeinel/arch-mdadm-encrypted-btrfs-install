@@ -112,7 +112,6 @@ system-config-printer
 thunar
 thunderbird
 tinyxxd
-tokei
 tpm2-tools
 transmission-gtk
 tree

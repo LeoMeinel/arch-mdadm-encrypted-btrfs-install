@@ -2,7 +2,6 @@ autotiling
 kvantum-theme-arc
 librewolf-bin
 macchina-bin
-nixpkgs-fmt
 nwg-bar-bin
 rimpy-bin
 selectdefaultapplication-fork-git
