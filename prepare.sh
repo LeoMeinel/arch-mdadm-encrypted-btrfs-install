@@ -1,9 +1,9 @@
-#!/bin/bash
+#!/usr/bin/env bash
 ###
 # File: prepare.sh
 # Author: Leopold Meinel (leo@meinel.dev)
 # -----
-# Copyright (c) 2023 Leopold Meinel & contributors
+# Copyright (c) 2024 Leopold Meinel & contributors
 # SPDX ID: GPL-3.0-or-later
 # URL: https://www.gnu.org/licenses/gpl-3.0-standalone.html
 # -----
@@ -168,18 +168,17 @@ if [[ -n "$DISK2" ]]; then
     DISK2P1="$(lsblk -rnpo TYPE,NAME "$DISK2" | grep "part" | sed 's/part//' | sed -n '1p' | tr -d "[:space:]")"
     DISK2P2="$(lsblk -rnpo TYPE,NAME "$DISK2" | grep "part" | sed 's/part//' | sed -n '2p' | tr -d "[:space:]")"
     ## Configure raid1
-    mdadm --create --verbose --level=1 --metadata=1.2 --raid-devices=2 --homehost=any --name=md0 /dev/md/md0 "$DISK1P2" "$DISK2P2"
+    RAID_DEVICE=/dev/md/md0
+    mdadm --create --verbose --level=1 --metadata=1.2 --raid-devices=2 --homehost=any --name=md0 "$RAID_DEVICE" "$DISK1P2" "$DISK2P2"
     ## Configure encryption
-    cryptsetup open --type plain -d /dev/urandom /dev/md/md0 to_be_wiped
-    cryptsetup close to_be_wiped
-    cryptsetup -y -v -h sha512 -s 512 luksFormat --type luks2 /dev/md/md0
-    cryptsetup open --type luks2 --perf-no_read_workqueue --perf-no_write_workqueue --persistent /dev/md/md0 md0_crypt
+    dd if=/dev/urandom of="$RAID_DEVICE" bs="$(stat -c "%o" "$RAID_DEVICE")" status=progress
+    cryptsetup -y -v luksFormat "$RAID_DEVICE"
+    cryptsetup open "$RAID_DEVICE" md0_crypt
 else
     ## Configure encryption
-    cryptsetup open --type plain -d /dev/urandom "$DISK1P2" to_be_wiped
-    cryptsetup close to_be_wiped
-    cryptsetup -y -v -h sha512 -s 512 luksFormat --type luks2 "$DISK1P2"
-    cryptsetup open --type luks2 "$DISK1P2" md0_crypt
+    dd if=/dev/urandom of="$DISK1P2" bs="$(stat -c "%o" "$DISK1P2")" status=progress
+    cryptsetup -y -v luksFormat "$DISK1P2"
+    cryptsetup open "$DISK1P2" md0_crypt
 fi
 
 # Configure lvm
@@ -219,23 +218,27 @@ create_subs1() {
         fi
     done
 }
+LV0="/dev/mapper/vg0-lv0"
+LV1="/dev/mapper/vg0-lv1"
+LV2="/dev/mapper/vg0-lv2"
+LV3="/dev/mapper/vg0-lv3"
 for ((i = 0; i < SUBVOLUMES_LENGTH; i++)); do
     case "${SUBVOLUMES[$i]}" in
     "/")
-        mkfs.btrfs -L ROOT /dev/mapper/vg0-lv0
-        mount /dev/mapper/vg0-lv0 /mnt
+        mkfs.btrfs -L ROOT "$LV0"
+        mount "$LV0" /mnt
         btrfs subvolume create /mnt/@
         btrfs subvolume create /mnt/@snapshots
         umount /mnt
         ;;
     "/usr/")
-        create_subs0 "${SUBVOLUMES[$i]}" "${CONFIGS[$i]}" "USR" "/dev/mapper/vg0-lv1"
+        create_subs0 "${SUBVOLUMES[$i]}" "${CONFIGS[$i]}" "USR" "$LV1"
         ;;
     "/var/")
-        create_subs0 "${SUBVOLUMES[$i]}" "${CONFIGS[$i]}" "VAR" "/dev/mapper/vg0-lv2"
+        create_subs0 "${SUBVOLUMES[$i]}" "${CONFIGS[$i]}" "VAR" "$LV2"
         ;;
     "/home/")
-        create_subs0 "${SUBVOLUMES[$i]}" "${CONFIGS[$i]}" "HOME" "/dev/mapper/vg0-lv3"
+        create_subs0 "${SUBVOLUMES[$i]}" "${CONFIGS[$i]}" "HOME" "$LV3"
         ;;
     esac
 done
@@ -264,25 +267,26 @@ mount_subs1() {
 for ((i = 0; i < SUBVOLUMES_LENGTH; i++)); do
     case "${SUBVOLUMES[$i]}" in
     "/")
-        mount -o "$OPTIONS0" /dev/mapper/vg0-lv0 "/mnt${SUBVOLUMES[$i]}"
-        mount --mkdir -o "${OPTIONS3}snapshots" /dev/mapper/vg0-lv0 "/mnt${SUBVOLUMES[$i]}.snapshots"
+        mount -o "$OPTIONS0" "$LV0" "/mnt${SUBVOLUMES[$i]}"
+        mount --mkdir -o "${OPTIONS3}snapshots" "$LV0" "/mnt${SUBVOLUMES[$i]}.snapshots"
         ;;
-    "/usr/")
-        mount_subs0 "${SUBVOLUMES[$i]}" "${CONFIGS[$i]}" "$OPTIONS1" "/dev/mapper/vg0-lv1"
+    "/nix/")
+        mount_subs0 "${SUBVOLUMES[$i]}" "${CONFIGS[$i]}" "$OPTIONS1" "$LV1"
         ;;
     "/var/")
-        mount_subs0 "${SUBVOLUMES[$i]}" "${CONFIGS[$i]}" "$OPTIONS2" "/dev/mapper/vg0-lv2"
+        mount_subs0 "${SUBVOLUMES[$i]}" "${CONFIGS[$i]}" "$OPTIONS2" "$LV2"
         ;;
     "/home/")
-        mount_subs0 "${SUBVOLUMES[$i]}" "${CONFIGS[$i]}" "$OPTIONS2" "/dev/mapper/vg0-lv3"
+        mount_subs0 "${SUBVOLUMES[$i]}" "${CONFIGS[$i]}" "$OPTIONS2" "$LV3"
         ;;
     esac
 done
 chmod 775 /mnt/var/games
 ## /efi
-mount --mkdir -o noexec,nodev,nosuid,noatime,fmask=0077,dmask=0077 "$DISK1P1" /mnt/efi
+OPTIONS4="noexec,nodev,nosuid,noatime,fmask=0077,dmask=0077"
+mount --mkdir -o "$OPTIONS4" "$DISK1P1" /mnt/efi
 [[ -n "$DISK2" ]] &&
-    mount --mkdir -o noexec,nodev,nosuid,noatime,fmask=0077,dmask=0077 "$DISK2P1" /mnt/.efi.bak
+    mount --mkdir -o "$OPTIONS4" "$DISK2P1" /mnt/.efi.bak
 ## /boot
 mkdir -p /mnt/boot
 

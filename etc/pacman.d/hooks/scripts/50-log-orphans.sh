@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 ###
 # File: 50-log-orphans.sh
 # Author: Leopold Meinel (leo@meinel.dev)

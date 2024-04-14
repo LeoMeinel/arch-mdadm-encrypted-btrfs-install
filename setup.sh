@@ -1,9 +1,9 @@
-#!/bin/bash
+#!/usr/bin/env bash
 ###
 # File: setup.sh
 # Author: Leopold Meinel (leo@meinel.dev)
 # -----
-# Copyright (c) 2023 Leopold Meinel & contributors
+# Copyright (c) 2024 Leopold Meinel & contributors
 # SPDX ID: GPL-3.0-or-later
 # URL: https://www.gnu.org/licenses/gpl-3.0-standalone.html
 # -----
@@ -45,7 +45,7 @@ sed -i "s/$STRING/SHELL=\/bin\/bash/" "$FILE"
 groupadd -r audit
 groupadd -r usbguard
 useradd -ms /bin/bash -G adm,audit,log,rfkill,sys,systemd-journal,usbguard,wheel,video "$SYSUSER"
-useradd -ms /bin/bash -G docker,video "$DOCKUSER"
+useradd -ms /bin/bash -G docker,video "$VIRTUSER"
 useradd -ms /bin/bash -G video "$HOMEUSER"
 echo "#################################################################"
 echo "#                      _    _           _   _                   #"
@@ -64,8 +64,8 @@ echo "Enter password for root"
 passwd root
 echo "Enter password for $SYSUSER"
 passwd "$SYSUSER"
-echo "Enter password for $DOCKUSER"
-passwd "$DOCKUSER"
+echo "Enter password for $VIRTUSER"
+passwd "$VIRTUSER"
 echo "Enter password for $HOMEUSER"
 passwd "$HOMEUSER"
 
@@ -85,14 +85,6 @@ locale-gen
 chown root:root /etc/doas.conf
 chmod 0400 /etc/doas.conf
 ## Configure pacman hooks in /etc/pacman.d/hooks
-{
-    echo '#!/bin/sh'
-    echo ''
-    echo '/usr/bin/firecfg >/dev/null 2>&1'
-    echo "/usr/bin/su -c '/usr/bin/rm -rf ~/.local/share/applications/*' $SYSUSER"
-    echo "/usr/bin/su -c '/usr/bin/rm -rf ~/.local/share/applications/*' $DOCKUSER"
-    echo "/usr/bin/su -c '/usr/bin/rm -rf ~/.local/share/applications/*' $HOMEUSER"
-} >/etc/pacman.d/hooks/scripts/70-firejail.sh
 DISK1="$(lsblk -npo PKNAME "$(findmnt -no SOURCE --target /efi)" | tr -d "[:space:]")"
 DISK1P2="$(lsblk -rnpo TYPE,NAME "$DISK1" | grep "part" | sed 's/part//' | sed -n '2p' | tr -d "[:space:]")"
 lsblk -rno TYPE "$DISK1P2" | grep -q "raid1" &&
@@ -112,7 +104,7 @@ lsblk -rno TYPE "$DISK1P2" | grep -q "raid1" &&
             echo "Exec = /bin/sh -c '/etc/pacman.d/hooks/scripts/99-efibackup.sh'"
         } >/etc/pacman.d/hooks/99-efibackup.hook
         {
-            echo '#!/bin/sh'
+            echo '#!/usr/bin/env sh'
             echo ''
             echo 'set -e'
             echo 'if /usr/bin/mountpoint -q /efi; then'
@@ -179,7 +171,7 @@ pacman -Syu --noprogressbar --noconfirm --needed - <"$SCRIPT_DIR/pkgs-setup.txt"
 ## Install optional dependencies
 DEPENDENCIES=""
 pacman -Qq "apparmor" >/dev/null 2>&1 &&
-    DEPENDENCIES+=$'\npython-notify2'
+    DEPENDENCIES+=$'\npython-notify2\npython-psutil'
 pacman -Qq "docker" >/dev/null 2>&1 &&
     DEPENDENCIES+=$'\ndocker-scan'
 pacman -Qq "libvirt" >/dev/null 2>&1 &&

@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 ###
 # File: 60-dracut-uefi-remove.sh
 # Author: Leopold Meinel (leo@meinel.dev)
