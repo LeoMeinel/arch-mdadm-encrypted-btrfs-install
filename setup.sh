@@ -45,7 +45,7 @@ sed -i "s/$STRING/SHELL=\/bin\/bash/" "$FILE"
 groupadd -r audit
 groupadd -r usbguard
 useradd -ms /bin/bash -G adm,audit,log,rfkill,sys,systemd-journal,usbguard,wheel,video "$SYSUSER"
-useradd -ms /bin/bash -G docker,video "$DOCKUSER"
+useradd -ms /bin/bash -G docker,video "$VIRTUSER"
 useradd -ms /bin/bash -G video "$HOMEUSER"
 echo "#################################################################"
 echo "#                      _    _           _   _                   #"
@@ -64,8 +64,8 @@ echo "Enter password for root"
 passwd root
 echo "Enter password for $SYSUSER"
 passwd "$SYSUSER"
-echo "Enter password for $DOCKUSER"
-passwd "$DOCKUSER"
+echo "Enter password for $VIRTUSER"
+passwd "$VIRTUSER"
 echo "Enter password for $HOMEUSER"
 passwd "$HOMEUSER"
 

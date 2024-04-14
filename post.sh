@@ -3,7 +3,7 @@
 # File: post.sh
 # Author: Leopold Meinel (leo@meinel.dev)
 # -----
-# Copyright (c) 2023 Leopold Meinel & contributors
+# Copyright (c) 2024 Leopold Meinel & contributors
 # SPDX ID: GPL-3.0-or-later
 # URL: https://www.gnu.org/licenses/gpl-3.0-standalone.html
 # -----
@@ -28,7 +28,7 @@ doas localectl --no-convert set-keymap "$KEYMAP"
 
 # Configure dot-files (setup)
 /dot-files.sh
-doas su -lc '/dot-files.sh' "$DOCKUSER"
+doas su -lc '/dot-files.sh' "$VIRTUSER"
 doas su -lc '/dot-files.sh' "$HOMEUSER"
 doas su -lc '/dot-files.sh' root
 
@@ -295,11 +295,11 @@ for string in "${STRINGS[@]}"; do
     doas sed -i "s/^$string$/#$string #arch-install/" "$FILE"
 done
 ## END sed
-doas firecfg --add-users root "$SYSUSER" "$DOCKUSER" "$HOMEUSER"
+doas firecfg --add-users root "$SYSUSER" "$VIRTUSER" "$HOMEUSER"
 doas apparmor_parser -r /etc/apparmor.d/firejail-default
 doas firecfg
 rm -rf ~/.local/share/applications/*
-doas su -c 'rm -rf ~/.local/share/applications/*' "$DOCKUSER"
+doas su -c 'rm -rf ~/.local/share/applications/*' "$VIRTUSER"
 doas su -c 'rm -rf ~/.local/share/applications/*' "$HOMEUSER"
 
 # Enable systemd services
