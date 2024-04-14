@@ -140,7 +140,7 @@ for ((i = 0; i < SUBVOLUMES_LENGTH; i++)); do
         mount -o "$OPTIONS0" "$LV0" "/mnt${SUBVOLUMES[$i]}"
         mount --mkdir -o "${OPTIONS3}snapshots" "$LV0" "/mnt${SUBVOLUMES[$i]}.snapshots"
         ;;
-    "/nix/")
+    "/usr/")
         mount_subs0 "${SUBVOLUMES[$i]}" "${CONFIGS[$i]}" "$OPTIONS1" "$LV1"
         ;;
     "/var/")
