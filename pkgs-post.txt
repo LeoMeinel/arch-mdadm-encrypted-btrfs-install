@@ -1,2 +1,2 @@
 macchina-bin
-xdg-ninja-git
+xdg-ninja
