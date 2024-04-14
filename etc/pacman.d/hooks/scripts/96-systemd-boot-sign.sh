@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 ###
 # File: 96-systemd-boot-sign.sh
 # Author: Leopold Meinel (leo@meinel.dev)

@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/usr/bin/env bash
 ###
 # File: sway-logout
 # Author: Leopold Meinel (leo@meinel.dev)

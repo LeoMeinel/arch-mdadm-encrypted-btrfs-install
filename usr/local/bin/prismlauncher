@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/usr/bin/env sh
 ###
 # File: prismlauncher
 # Author: Leopold Meinel (leo@meinel.dev)

@@ -29,7 +29,6 @@ eza
 fd
 ffmpeg
 firefox
-firejail
 flatpak
 fwupd
 git-delta
@@ -89,8 +88,6 @@ pipewire-jack
 polkit-gnome
 postfix
 procs
-python-pip
-python-psutil
 qemu-desktop
 qt5ct
 qt6ct
@@ -114,13 +111,13 @@ sysstat
 system-config-printer
 thunar
 thunderbird
+tinyxxd
 tpm2-tools
 transmission-gtk
 tree
 ttf-font-awesome
 ttf-nerd-fonts-symbols-mono
 unarchiver
-unrar
 unzip
 usbguard
 usbutils
