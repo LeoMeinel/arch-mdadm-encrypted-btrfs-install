@@ -218,23 +218,27 @@ create_subs1() {
         fi
     done
 }
+LV0="/dev/mapper/vg0-lv0"
+LV1="/dev/mapper/vg0-lv1"
+LV2="/dev/mapper/vg0-lv2"
+LV3="/dev/mapper/vg0-lv3"
 for ((i = 0; i < SUBVOLUMES_LENGTH; i++)); do
     case "${SUBVOLUMES[$i]}" in
     "/")
-        mkfs.btrfs -L ROOT /dev/mapper/vg0-lv0
-        mount /dev/mapper/vg0-lv0 /mnt
+        mkfs.btrfs -L ROOT "$LV0"
+        mount "$LV0" /mnt
         btrfs subvolume create /mnt/@
         btrfs subvolume create /mnt/@snapshots
         umount /mnt
         ;;
     "/usr/")
-        create_subs0 "${SUBVOLUMES[$i]}" "${CONFIGS[$i]}" "USR" "/dev/mapper/vg0-lv1"
+        create_subs0 "${SUBVOLUMES[$i]}" "${CONFIGS[$i]}" "USR" "$LV1"
         ;;
     "/var/")
-        create_subs0 "${SUBVOLUMES[$i]}" "${CONFIGS[$i]}" "VAR" "/dev/mapper/vg0-lv2"
+        create_subs0 "${SUBVOLUMES[$i]}" "${CONFIGS[$i]}" "VAR" "$LV2"
         ;;
     "/home/")
-        create_subs0 "${SUBVOLUMES[$i]}" "${CONFIGS[$i]}" "HOME" "/dev/mapper/vg0-lv3"
+        create_subs0 "${SUBVOLUMES[$i]}" "${CONFIGS[$i]}" "HOME" "$LV3"
         ;;
     esac
 done
@@ -263,17 +267,17 @@ mount_subs1() {
 for ((i = 0; i < SUBVOLUMES_LENGTH; i++)); do
     case "${SUBVOLUMES[$i]}" in
     "/")
-        mount -o "$OPTIONS0" /dev/mapper/vg0-lv0 "/mnt${SUBVOLUMES[$i]}"
-        mount --mkdir -o "${OPTIONS3}snapshots" /dev/mapper/vg0-lv0 "/mnt${SUBVOLUMES[$i]}.snapshots"
+        mount -o "$OPTIONS0" "$LV0" "/mnt${SUBVOLUMES[$i]}"
+        mount --mkdir -o "${OPTIONS3}snapshots" "$LV0" "/mnt${SUBVOLUMES[$i]}.snapshots"
         ;;
-    "/usr/")
-        mount_subs0 "${SUBVOLUMES[$i]}" "${CONFIGS[$i]}" "$OPTIONS1" "/dev/mapper/vg0-lv1"
+    "/nix/")
+        mount_subs0 "${SUBVOLUMES[$i]}" "${CONFIGS[$i]}" "$OPTIONS1" "$LV1"
         ;;
     "/var/")
-        mount_subs0 "${SUBVOLUMES[$i]}" "${CONFIGS[$i]}" "$OPTIONS2" "/dev/mapper/vg0-lv2"
+        mount_subs0 "${SUBVOLUMES[$i]}" "${CONFIGS[$i]}" "$OPTIONS2" "$LV2"
         ;;
     "/home/")
-        mount_subs0 "${SUBVOLUMES[$i]}" "${CONFIGS[$i]}" "$OPTIONS2" "/dev/mapper/vg0-lv3"
+        mount_subs0 "${SUBVOLUMES[$i]}" "${CONFIGS[$i]}" "$OPTIONS2" "$LV3"
         ;;
     esac
 done
