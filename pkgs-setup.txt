@@ -13,7 +13,6 @@ efitools
 ethtool
 eza
 fd
-firejail
 fwupd
 git-delta
 glow

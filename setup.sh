@@ -85,14 +85,6 @@ locale-gen
 chown root:root /etc/doas.conf
 chmod 0400 /etc/doas.conf
 ## Configure pacman hooks in /etc/pacman.d/hooks
-{
-    echo '#!/usr/bin/env sh'
-    echo ''
-    echo '/usr/bin/firecfg >/dev/null 2>&1'
-    echo "/usr/bin/su -c '/usr/bin/rm -rf ~/.local/share/applications/*' $SYSUSER"
-    echo "/usr/bin/su -c '/usr/bin/rm -rf ~/.local/share/applications/*' $DOCKUSER"
-    echo "/usr/bin/su -c '/usr/bin/rm -rf ~/.local/share/applications/*' $HOMEUSER"
-} >/etc/pacman.d/hooks/scripts/70-firejail.sh
 DISK1="$(lsblk -npo PKNAME "$(findmnt -no SOURCE --target /efi)" | tr -d "[:space:]")"
 DISK1P2="$(lsblk -rnpo TYPE,NAME "$DISK1" | grep "part" | sed 's/part//' | sed -n '2p' | tr -d "[:space:]")"
 lsblk -rno TYPE "$DISK1P2" | grep -q "raid1" &&
@@ -179,7 +171,7 @@ pacman -Syu --noprogressbar --noconfirm --needed - <"$SCRIPT_DIR/pkgs-setup.txt"
 ## Install optional dependencies
 DEPENDENCIES=""
 pacman -Qq "apparmor" >/dev/null 2>&1 &&
-    DEPENDENCIES+=$'\npython-notify2'
+    DEPENDENCIES+=$'\npython-notify2\npython-psutil'
 pacman -Qq "docker" >/dev/null 2>&1 &&
     DEPENDENCIES+=$'\ndocker-scan'
 pacman -Qq "libvirt" >/dev/null 2>&1 &&
