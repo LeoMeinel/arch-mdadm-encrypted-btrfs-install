@@ -270,6 +270,7 @@ YES)
 esac
 
 # Set default rust if rustup is installed
+source ~/.bash_profile
 [[ -n $(which rustup) ]] >/dev/null 2>&1 &&
     rustup default stable
 
@@ -278,7 +279,6 @@ esac
     xargs -n 1 doas flatpak install --system -y --noninteractive <"$SCRIPT_DIR/pkgs-flatpak.txt"
 
 # Install paru-bin
-source ~/.bash_profile
 git clone https://aur.archlinux.org/paru-bin.git ~/git/paru-bin
 cd ~/git/paru-bin
 makepkg -sri --noprogressbar --noconfirm --needed
