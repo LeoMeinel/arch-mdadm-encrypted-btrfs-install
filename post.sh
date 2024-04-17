@@ -233,6 +233,10 @@ YES)
     ;;
 esac
 
+# Set default rust if rustup is installed
+[[ -n $(which rustup) ]] >/dev/null 2>&1 &&
+    rustup default stable
+
 # Install flatpaks
 xargs -n 1 doas flatpak install --system -y --noninteractive <"$SCRIPT_DIR/pkgs-flatpak.txt"
 
