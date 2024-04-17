@@ -238,7 +238,8 @@ esac
     rustup default stable
 
 # Install flatpaks
-xargs -n 1 doas flatpak install --system -y --noninteractive <"$SCRIPT_DIR/pkgs-flatpak.txt"
+[[ -n $(which flatpak) ]] >/dev/null 2>&1 &&
+    xargs -n 1 doas flatpak install --system -y --noninteractive <"$SCRIPT_DIR/pkgs-flatpak.txt"
 
 # Install paru-bin
 source ~/.bash_profile
@@ -286,9 +287,6 @@ gpgconf --kill all
 paru -S --noprogressbar --noconfirm --needed - <"$SCRIPT_DIR/pkgs-post.txt"
 paru -Syu --noprogressbar --noconfirm
 paru -Scc
-## Update flatpaks
-[[ -n $(which flatpak) ]] >/dev/null 2>&1 &&
-    flatpak update --system -y --noninteractive
 
 # Clean firecfg
 doas firecfg --clean
