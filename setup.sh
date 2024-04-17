@@ -372,7 +372,7 @@ sed -i "s/$STRING/AutoEnable=true/" "$FILE"
 } >/etc/dracut.conf.d/modules.conf
 ## Configure /etc/dracut.conf.d/cmdline.conf
 DISK1P2UUID="$(blkid -s UUID -o value "$DISK1P2")"
-PARAMETERS="rd.luks.uuid=luks-$MD0UUID rd.lvm.lv=vg0/lv0 rd.md.uuid=$DISK1P2UUID root=/dev/mapper/vg0-lv0 rootfstype=btrfs rootflags=rw,noatime,compress=zstd:3,ssd,discard=async,space_cache=v2,subvolid=256,subvol=/@ rd.lvm.lv=vg0/lv1 rd.lvm.lv=vg0/lv2 rd.lvm.lv=vg0/lv3 rd.vconsole.unicode rd.vconsole.keymap=$KEYMAP loglevel=3 bgrt_disable audit=1 lsm=landlock,lockdown,yama,integrity,apparmor,bpf iommu=pt zswap.enabled=0 lockdown=integrity module.sig_enforce=1"
+PARAMETERS="rd.luks.uuid=luks-$MD0UUID rd.lvm.lv=vg0/lv0 rd.md.uuid=$DISK1P2UUID root=/dev/mapper/vg0-lv0 rootfstype=btrfs rootflags=rw,noatime,compress=zstd:3,ssd,discard=async,space_cache=v2,subvolid=256,subvol=/@ rd.lvm.lv=vg0/lv1 rd.lvm.lv=vg0/lv2 rd.lvm.lv=vg0/lv3 rd.vconsole.unicode rd.vconsole.keymap=$KEYMAP loglevel=3 bgrt_disable audit=1 lsm=landlock,lockdown,yama,integrity,apparmor,bpf iommu=pt zswap.enabled=0 lockdown=integrity module.sig_enforce=1 tsc=reliable clocksource=tsc cpufreq.default_governor=performance"
 #### If on intel set kernel parameter intel_iommu=on
 pacman -Qq "intel-ucode" >/dev/null 2>&1 &&
     PARAMETERS="${PARAMETERS} intel_iommu=on"
@@ -428,6 +428,8 @@ chmod 755 /usr/local/bin/edit
 chmod 755 /usr/local/bin/ex
 chmod 755 /usr/local/bin/freetube
 chmod 755 /usr/local/bin/prismlauncher
+chmod 755 /usr/local/bin/protontricks
+chmod 755 /usr/local/bin/steam
 chmod 755 /usr/local/bin/sway-logout
 chmod 755 /usr/local/bin/trilium
 chmod 755 /usr/local/bin/vedit
@@ -435,6 +437,7 @@ chmod 755 /usr/local/bin/vi
 chmod 755 /usr/local/bin/view
 chmod 755 /usr/local/bin/vim
 chmod 755 /usr/local/bin/vimdiff
+chmod 755 /usr/local/bin/wine
 
 # Configure /usr
 ## Configure /usr/share/snapper/config-templates/default & configure snapper configs
