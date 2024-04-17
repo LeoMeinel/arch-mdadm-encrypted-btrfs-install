@@ -172,15 +172,25 @@ if [[ -n "$DISK2" ]]; then
     mdadm --create --verbose --level=1 --metadata=1.2 --raid-devices=2 --homehost=any --name=md0 "$RAID_DEVICE" "$DISK1P2" "$DISK2P2"
     ## Configure encryption
     read -rp "Secure wipe $DISK1 and $DISK2? (Type 'yes' in capital letters): " choice
-    [[ "$choice" == "YES" ]] &&
-        dd if=/dev/urandom of="$RAID_DEVICE" bs="$(stat -c "%o" "$RAID_DEVICE")" status=progress
+    if [[ "$choice" == "YES" ]]; then
+        ## Don't fail on error
+        set +e
+        dd if=/dev/urandom of="$RAID_DEVICE" bs="$(stat -c "%o" "$RAID_DEVICE")" status=progthen
+        ## Fail on error
+        set -e
+    fi
     cryptsetup -y -v luksFormat "$RAID_DEVICE"
     cryptsetup open "$RAID_DEVICE" md0_crypt
 else
     ## Configure encryption
     read -rp "Secure wipe $DISK1? (Type 'yes' in capital letters): " choice
-    [[ "$choice" == "YES" ]] &&
-        dd if=/dev/urandom of="$DISK1P2" bs="$(stat -c "%o" "$DISK1P2")" status=progress
+    if [[ "$choice" == "YES" ]]; then
+        ## Don't fail on error
+        set +e
+        dd if=/dev/urandom of="$DISK1P2" bs="$(stat -c "%o" "$DISK1P2")" status=proerror
+        ## Fail on error
+        set -e
+    fi
     cryptsetup -y -v luksFormat "$DISK1P2"
     cryptsetup open "$DISK1P2" md0_crypt
 fi

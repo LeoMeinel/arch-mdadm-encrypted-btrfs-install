@@ -269,6 +269,14 @@ YES)
     ;;
 esac
 
+# Set default rust if rustup is installed
+[[ -n $(which rustup) ]] >/dev/null 2>&1 &&
+    rustup default stable
+
+# Install flatpaks
+[[ -n $(which flatpak) ]] >/dev/null 2>&1 &&
+    xargs -n 1 doas flatpak install --system -y --noninteractive <"$SCRIPT_DIR/pkgs-flatpak.txt"
+
 # Install paru-bin
 source ~/.bash_profile
 git clone https://aur.archlinux.org/paru-bin.git ~/git/paru-bin
@@ -315,9 +323,6 @@ gpgconf --kill all
 paru -S --noprogressbar --noconfirm --needed - <"$SCRIPT_DIR/pkgs-post.txt"
 paru -Syu --noprogressbar --noconfirm
 paru -Scc
-## Update flatpaks
-[[ -n $(which flatpak) ]] >/dev/null 2>&1 &&
-    flatpak update --system -y --noninteractive
 
 # Prepare dot-files (vscodium)
 /dot-files.sh vscodium

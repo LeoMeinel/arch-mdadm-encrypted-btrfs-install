@@ -203,8 +203,6 @@ pacman -Qq "pipewire" >/dev/null 2>&1 &&
 pacman -Qq "r" >/dev/null 2>&1 &&
     DEPENDENCIES+=$'\nblas-openblas'
 pacman -S --noprogressbar --noconfirm --asdeps - <<<"$DEPENDENCIES"
-## Install flatpaks
-xargs -n 1 flatpak install --system -y --noninteractive <"$SCRIPT_DIR/pkgs-flatpak.txt"
 
 # Configure $SYSUSER
 ## Run sysuser.sh
@@ -413,9 +411,9 @@ rsync -rq "$SCRIPT_DIR/usr/" /usr
 cp /git/cryptboot/systemd-boot-sign /usr/local/bin/
 cp /git/cryptboot/cryptboot /usr/local/bin/
 cp /git/cryptboot/cryptboot-efikeys /usr/local/bin/
-## Configure /usr/share/gruvbox/gruvbox.yml
+## Configure /usr/share/gruvbox/gruvbox.toml
 chmod 755 /usr/share/gruvbox
-chmod 644 /usr/share/gruvbox/gruvbox.yml
+chmod 644 /usr/share/gruvbox/gruvbox.toml
 ## Configure /usr/local/bin
 chmod 755 /usr/local/bin/cryptboot
 chmod 755 /usr/local/bin/cryptboot-efikeys
