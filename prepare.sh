@@ -171,12 +171,16 @@ if [[ -n "$DISK2" ]]; then
     RAID_DEVICE=/dev/md/md0
     mdadm --create --verbose --level=1 --metadata=1.2 --raid-devices=2 --homehost=any --name=md0 "$RAID_DEVICE" "$DISK1P2" "$DISK2P2"
     ## Configure encryption
-    dd if=/dev/urandom of="$RAID_DEVICE" bs="$(stat -c "%o" "$RAID_DEVICE")" status=progress
+    read -rp "Secure wipe $DISK1 and $DISK2? (Type 'yes' in capital letters): " choice
+    [[ "$choice" == "YES" ]] &&
+        dd if=/dev/urandom of="$RAID_DEVICE" bs="$(stat -c "%o" "$RAID_DEVICE")" status=progress
     cryptsetup -y -v luksFormat "$RAID_DEVICE"
     cryptsetup open "$RAID_DEVICE" md0_crypt
 else
     ## Configure encryption
-    dd if=/dev/urandom of="$DISK1P2" bs="$(stat -c "%o" "$DISK1P2")" status=progress
+    read -rp "Secure wipe $DISK1? (Type 'yes' in capital letters): " choice
+    [[ "$choice" == "YES" ]] &&
+        dd if=/dev/urandom of="$DISK1P2" bs="$(stat -c "%o" "$DISK1P2")" status=progress
     cryptsetup -y -v luksFormat "$DISK1P2"
     cryptsetup open "$DISK1P2" md0_crypt
 fi
