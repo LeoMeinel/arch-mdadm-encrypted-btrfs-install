@@ -22,6 +22,3 @@ cp "$SCRIPT_DIR/post.sh" ~/
 cp "$SCRIPT_DIR/install.conf" ~/
 chmod +x ~/post.sh
 cp "$SCRIPT_DIR/post-gui.sh" ~/
-
-# Create backup directory
-mkdir -p ~/backup
