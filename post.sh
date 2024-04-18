@@ -283,6 +283,7 @@ doas sed -i "/$STRING/a BatchInstall" "$FILE"
     echo "standard-resolver"
 } >"$GNUPGHOME"/dirmgr.conf
 gpgconf --kill all
+sleep 5
 ## AUR packages
 paru -S --noprogressbar --noconfirm --needed - <"$SCRIPT_DIR/pkgs-post.txt"
 paru -Syu --noprogressbar --noconfirm
