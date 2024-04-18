@@ -1,12 +1,9 @@
 autotiling
 kvantum-theme-arc
-libreoffice-extension-languagetool
 librewolf-bin
 macchina-bin
-nixpkgs-fmt
 nwg-bar-bin
-radian
-rnix-lsp
+rimpy-bin
 selectdefaultapplication-fork-git
 snapper-gui-git
 swaylock-effects
