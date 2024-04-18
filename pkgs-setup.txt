@@ -52,7 +52,6 @@ kanshi
 libavif
 libheif
 libjxl
-libnitrokey
 libopenraw
 librsvg
 libsecret
@@ -91,6 +90,7 @@ postfix
 procs
 qemu-desktop
 qt5ct
+qt5-wayland
 qt6ct
 quilt
 ripgrep
