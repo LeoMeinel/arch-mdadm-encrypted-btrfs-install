@@ -319,6 +319,7 @@ doas sed -i "/$STRING/a BatchInstall" "$FILE"
     echo "standard-resolver"
 } >"$GNUPGHOME"/dirmgr.conf
 gpgconf --kill all
+sleep 5
 ## AUR packages
 paru -S --noprogressbar --noconfirm --needed - <"$SCRIPT_DIR/pkgs-post.txt"
 paru -Syu --noprogressbar --noconfirm
@@ -351,4 +352,5 @@ doas rm -f /root/.bash_history
 rm -f "$GNUPGHOME"/dirmgr.conf
 rm -f ~/.bash_history
 rm -f "$SCRIPT_DIR/pkgs-post.txt"
+rm -f "$SCRIPT_DIR/pkgs-flatpak.txt"
 rm -f "$SCRIPT_DIR/post.sh"

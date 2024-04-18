@@ -175,7 +175,7 @@ if [[ -n "$DISK2" ]]; then
     if [[ "$choice" == "YES" ]]; then
         ## Don't fail on error
         set +e
-        dd if=/dev/urandom of="$RAID_DEVICE" bs="$(stat -c "%o" "$RAID_DEVICE")" status=progthen
+        dd if=/dev/urandom of="$RAID_DEVICE" bs="$(stat -c "%o" "$RAID_DEVICE")" status=progress
         ## Fail on error
         set -e
     fi
@@ -187,7 +187,7 @@ else
     if [[ "$choice" == "YES" ]]; then
         ## Don't fail on error
         set +e
-        dd if=/dev/urandom of="$DISK1P2" bs="$(stat -c "%o" "$DISK1P2")" status=proerror
+        dd if=/dev/urandom of="$DISK1P2" bs="$(stat -c "%o" "$DISK1P2")" status=progress
         ## Fail on error
         set -e
     fi
