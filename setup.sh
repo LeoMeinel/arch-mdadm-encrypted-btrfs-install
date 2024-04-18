@@ -471,6 +471,9 @@ done
 ## Configure /var/games
 chown :games /var/games
 
+# Configure /root
+mkdir -p /root/backup
+
 # Setup /efi
 rsync -rq "$SCRIPT_DIR/efi/" /efi
 chmod 644 /efi/loader/loader.conf
