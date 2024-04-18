@@ -2,11 +2,11 @@ autotiling
 kvantum-theme-arc
 librewolf-bin
 macchina-bin
+nitrokey-app2
 nwg-bar-bin
 rimpy-bin
 selectdefaultapplication-fork-git
 snapper-gui-git
-solo2-cli-bin
 swaylock-effects
 swaync
 ttf-hasklig

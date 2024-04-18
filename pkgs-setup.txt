@@ -52,6 +52,7 @@ kanshi
 libavif
 libheif
 libjxl
+libnitrokey
 libopenraw
 librsvg
 libsecret
