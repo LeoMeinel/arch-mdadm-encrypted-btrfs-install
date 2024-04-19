@@ -1,8 +1,6 @@
 base
 base-devel
 btrfs-progs
-docker
-docker-compose
 dracut
 git
 iptables
@@ -15,5 +13,6 @@ linux-lts-headers
 lvm2
 neovim
 opendoas
+podman
 reflector
 rsync
