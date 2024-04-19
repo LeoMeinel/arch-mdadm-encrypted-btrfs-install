@@ -21,6 +21,3 @@ cp "$SCRIPT_DIR/pkgs-flatpak.txt" ~/
 cp "$SCRIPT_DIR/post.sh" ~/
 cp "$SCRIPT_DIR/install.conf" ~/
 chmod +x ~/post.sh
-
-# Create backup directory
-mkdir -p ~/backup
