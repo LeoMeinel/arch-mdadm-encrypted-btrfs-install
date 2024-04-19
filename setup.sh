@@ -45,7 +45,7 @@ sed -i "s/$STRING/SHELL=\/bin\/bash/" "$FILE"
 groupadd -r audit
 groupadd -r usbguard
 useradd -ms /bin/bash -G adm,audit,log,rfkill,sys,systemd-journal,usbguard,wheel,video "$SYSUSER"
-useradd -ms /bin/bash -G docker,video "$VIRTUSER"
+useradd -ms /bin/bash -G video "$VIRTUSER"
 useradd -ms /bin/bash -G video "$HOMEUSER"
 echo "#################################################################"
 echo "#                      _    _           _   _                   #"
@@ -486,12 +486,12 @@ pacman -Qq "apparmor" >/dev/null 2>&1 &&
     }
 pacman -Qq "containerd" >/dev/null 2>&1 &&
     systemctl enable containerd.service
-pacman -Qq "docker" >/dev/null 2>&1 &&
-    systemctl enable docker.service
 pacman -Qq "logwatch" >/dev/null 2>&1 &&
     systemctl enable logwatch.timer
 pacman -Qq "openssh" >/dev/null 2>&1 &&
     systemctl enable sshd.service
+pacman -Qq "podman" >/dev/null 2>&1 &&
+    systemctl enable podman.service
 pacman -Qq "reflector" >/dev/null 2>&1 &&
     {
         systemctl enable reflector.service
