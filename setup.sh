@@ -173,8 +173,8 @@ pacman -Syu --noprogressbar --noconfirm --needed - <"$SCRIPT_DIR/pkgs-setup.txt"
 DEPENDENCIES=""
 pacman -Qq "apparmor" >/dev/null 2>&1 &&
     DEPENDENCIES+=$'\npython-notify2\npython-psutil'
-pacman -Qq "docker" >/dev/null 2>&1 &&
-    DEPENDENCIES+=$'\ndocker-scan'
+pacman -Qq "podman" >/dev/null 2>&1 &&
+    DEPENDENCIES+=$'\nslirp4netns\npodman-compose\nnetavark\naardvark-dns'
 pacman -Qq "libvirt" >/dev/null 2>&1 &&
     DEPENDENCIES+=$'\ndnsmasq'
 pacman -Qq "lollypop" >/dev/null 2>&1 &&
@@ -348,7 +348,7 @@ sed -i "s/$STRING/AutoEnable=true/" "$FILE"
     echo "snapshot = True"
     echo 'important_packages = ["dracut", "linux", "linux-lts", "linux-zen"]'
     echo ""
-    echo "[var_lib_docker]"
+    echo "[var_lib_containers]"
     echo "snapshot = True"
     echo 'important_packages = ["dracut", "linux", "linux-lts", "linux-zen"]'
     echo ""
@@ -498,7 +498,7 @@ for ((i = 0; i < SUBVOLUMES_LENGTH; i++)); do
         HOURLY=1
         DAILY=1
         ;;
-    "var" | "var_lib" | "var_lib_docker")
+    "var" | "var_lib" | "var_lib_containers")
         HOURLY=2
         DAILY=2
         ;;
