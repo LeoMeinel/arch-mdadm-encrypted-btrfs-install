@@ -51,7 +51,7 @@ reboot
 
 ```sh
 ~/post.sh
-reboot
+doas reboot
 ```
 
 :information_source: | ¹Enable `Secure Boot` in [`UEFI Firmware Settings`](https://wiki.archlinux.org/title/Unified_Extensible_Firmware_Interface/Secure_Boot#Before_booting_the_OS).

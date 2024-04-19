@@ -233,8 +233,16 @@ YES)
     ;;
 esac
 
-# Install paru-bin
+# Set default rust if rustup is installed
 source ~/.bash_profile
+[[ -n $(which rustup) ]] >/dev/null 2>&1 &&
+    rustup default stable
+
+# Install flatpaks
+[[ -n $(which flatpak) ]] >/dev/null 2>&1 &&
+    xargs -n 1 doas flatpak install --system -y --noninteractive <"$SCRIPT_DIR/pkgs-flatpak.txt"
+
+# Install paru-bin
 git clone https://aur.archlinux.org/paru-bin.git ~/git/paru-bin
 cd ~/git/paru-bin
 makepkg -sri --noprogressbar --noconfirm --needed
@@ -275,13 +283,11 @@ doas sed -i "/$STRING/a BatchInstall" "$FILE"
     echo "standard-resolver"
 } >"$GNUPGHOME"/dirmgr.conf
 gpgconf --kill all
+sleep 5
 ## AUR packages
 paru -S --noprogressbar --noconfirm --needed - <"$SCRIPT_DIR/pkgs-post.txt"
 paru -Syu --noprogressbar --noconfirm
 paru -Scc
-## Update flatpaks
-[[ -n $(which flatpak) ]] >/dev/null 2>&1 &&
-    flatpak update --system -y --noninteractive
 
 # Clean firecfg
 doas firecfg --clean
