@@ -425,6 +425,7 @@ ln -s "$(which nvim)" /usr/local/bin/vim
 chmod 755 /usr/local/bin/edit
 chmod 755 /usr/local/bin/ex
 chmod 755 /usr/local/bin/freetube
+chmod 755 /usr/local/bin/nitrokey-app
 chmod 755 /usr/local/bin/prismlauncher
 chmod 755 /usr/local/bin/protontricks
 chmod 755 /usr/local/bin/steam
