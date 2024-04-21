@@ -19,6 +19,7 @@ dbus
 devtools
 dosfstools
 dotnet-runtime
+dotnet-runtime-6.0
 duf
 dust
 efibootmgr
