@@ -109,6 +109,7 @@ starship
 sway
 swaybg
 swayidle
+swaync
 sysstat
 system-config-printer
 thunar

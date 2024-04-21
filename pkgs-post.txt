@@ -7,7 +7,6 @@ rimpy-bin
 selectdefaultapplication-fork-git
 snapper-gui-git
 swaylock-effects
-swaync
 ttf-hasklig
 usbguard-notifier
 vscodium-bin
