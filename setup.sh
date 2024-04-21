@@ -437,6 +437,7 @@ chmod 755 /usr/local/bin/view
 chmod 755 /usr/local/bin/vim
 chmod 755 /usr/local/bin/vimdiff
 chmod 755 /usr/local/bin/wine
+chmod 755 /usr/local/bin/winetricks
 
 # Configure /usr
 ## Configure /usr/share/snapper/config-templates/default & configure snapper configs
