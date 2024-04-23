@@ -1,4 +1,0 @@
-com.github.zadam.trilium
-com.nitrokey.nitrokey-app2
-io.freetubeapp.FreeTube
-org.prismlauncher.PrismLauncher
