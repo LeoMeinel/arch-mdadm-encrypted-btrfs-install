@@ -90,6 +90,7 @@ pipewire-jack
 polkit-gnome
 postfix
 procs
+python-pynitrokey
 qemu-desktop
 qt5ct
 qt5-wayland
