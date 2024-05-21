@@ -30,12 +30,11 @@ sed_exit() {
     echo "password required pam_pwquality.so shadowretry=3 minlen=12 difok=6 dcredit=-1 ucredit=-1 ocredit=-1 lcredit=-1 enforce_for_root"
     echo "password required pam_unix.so use_authtok shadow"
 } >/etc/pam.d/passwd
-## FIXME: Add below after support has been implemented
-##{
-##    echo ""
-##    echo "# Custom"
-##    echo "YESCRYPT_COST_FACTOR 11"
-##} >>/etc/login.defs
+{
+    echo ""
+    echo "# Custom"
+    echo "YESCRYPT_COST_FACTOR 11"
+} >>/etc/login.defs
 ## START sed
 FILE=/etc/default/useradd
 STRING="^SHELL=.*"
