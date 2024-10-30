@@ -4,7 +4,6 @@ apparmor
 arc-gtk-theme
 arch-audit
 ark
-autopep8
 autotiling
 bash-completion
 bat
@@ -118,11 +117,6 @@ swayidle
 swaync
 sysstat
 system-config-printer
-tesseract
-tesseract-data-deu
-tesseract-data-eng
-tesseract-data-fra
-tesseract-data-nld
 thunar
 thunderbird
 tinyxxd
