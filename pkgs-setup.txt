@@ -34,7 +34,6 @@ man-db
 mtools
 noto-fonts
 ntfs-3g
-nwg-bar
 openbsd-netcat
 openssh
 oxipng
