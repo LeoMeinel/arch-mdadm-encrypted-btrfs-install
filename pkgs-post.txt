@@ -1,8 +1,5 @@
-autotiling
 kvantum-theme-arc
 librewolf-bin
-macchina-bin
-nwg-bar-bin
 rimpy-bin
 selectdefaultapplication-fork-git
 snapper-gui-git
