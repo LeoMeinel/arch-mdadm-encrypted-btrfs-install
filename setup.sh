@@ -179,6 +179,8 @@ pacman -Qq "lollypop" >/dev/null 2>&1 &&
     DEPENDENCIES+=$'\ngst-plugins-base\ngst-plugins-good\ngst-libav\nkid3-qt'
 pacman -Qq "mpv" >/dev/null 2>&1 &&
     DEPENDENCIES+=$'\nyt-dlp'
+pacman -Qq "pipewire" >/dev/null 2>&1 &&
+    DEPENDENCIES+=$'\npipewire-alsa\npipewire-pulse'
 pacman -Qq "r" >/dev/null 2>&1 &&
     DEPENDENCIES+=$'\ngcc-fortran\ntk'
 pacman -Qq "system-config-printer" >/dev/null 2>&1 &&
@@ -194,12 +196,20 @@ pacman -Qq "wl-clipboard" >/dev/null 2>&1 &&
 pacman -Qq "wlroots" >/dev/null 2>&1 &&
     DEPENDENCIES+=$'\nxorg-xwayland'
 pacman -S --noprogressbar --noconfirm --needed --asdeps - <<<"$DEPENDENCIES"
-## Reinstall pipewire plugins as dependencies
+## Reinstall packages as dependencies
 DEPENDENCIES=""
-pacman -Qq "pipewire" >/dev/null 2>&1 &&
-    DEPENDENCIES+=$'\npipewire-alsa\npipewire-jack\npipewire-pulse'
-pacman -Qq "r" >/dev/null 2>&1 &&
+pacman -Qq "blas-openblas" >/dev/null 2>&1 &&
     DEPENDENCIES+=$'\nblas-openblas'
+pacman -Qq "pipewire-jack" >/dev/null 2>&1 &&
+    DEPENDENCIES+=$'\npipewire-jack'
+pacman -Qq "tesseract-data-deu" >/dev/null 2>&1 &&
+    DEPENDENCIES+=$'\ntesseract-data-deu'
+pacman -Qq "tesseract-data-eng" >/dev/null 2>&1 &&
+    DEPENDENCIES+=$'\ntesseract-data-eng'
+pacman -Qq "tesseract-data-fra" >/dev/null 2>&1 &&
+    DEPENDENCIES+=$'\ntesseract-data-fra'
+pacman -Qq "tesseract-data-nld" >/dev/null 2>&1 &&
+    DEPENDENCIES+=$'\ntesseract-data-nld'
 pacman -S --noprogressbar --noconfirm --asdeps - <<<"$DEPENDENCIES"
 
 # Configure $SYSUSER
@@ -237,13 +247,6 @@ echo "$HOSTNAME" >/etc/hostname
     echo "ff02::1  ip6-allnodes"
     echo "ff02::2  ip6-allrouters"
 } >/etc/hosts
-## Configure /etc/fwupd/uefi_capsule.conf
-{
-    echo ""
-    echo "# Custom"
-    echo "## Set /efi as mountpoint"
-    echo "OverrideESPMountPoint=/efi"
-} >>/etc/fwupd/uefi_capsule.conf
 ## Configure /etc/cryptboot.conf
 git clone -b server https://github.com/leomeinel/cryptboot.git /git/cryptboot
 cp /git/cryptboot/cryptboot.conf /etc/

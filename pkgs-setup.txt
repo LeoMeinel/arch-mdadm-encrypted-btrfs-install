@@ -29,6 +29,7 @@ lrzip
 lshw
 lsof
 lzop
+macchina
 man-db
 mtools
 noto-fonts
