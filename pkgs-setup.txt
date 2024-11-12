@@ -54,11 +54,6 @@ hunspell-fr
 hunspell-nl
 hwinfo
 hyperfine
-hyphen
-hyphen-de
-hyphen-en
-hyphen-fr
-hyphen-nl
 inetutils
 jdk17-openjdk
 jdk21-openjdk
