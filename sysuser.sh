@@ -17,8 +17,6 @@ SCRIPT_DIR="$(dirname -- "$(readlink -f -- "$0")")"
 
 # Set up post.sh
 cp "$SCRIPT_DIR/pkgs-post.txt" ~/
-cp "$SCRIPT_DIR/pkgs-flatpak.txt" ~/
 cp "$SCRIPT_DIR/post.sh" ~/
 cp "$SCRIPT_DIR/install.conf" ~/
 chmod +x ~/post.sh
-cp "$SCRIPT_DIR/post-gui.sh" ~/
