@@ -10,12 +10,9 @@ linux-firmware
 linux-headers
 linux-lts
 linux-lts-headers
-linux-zen
-linux-zen-headers
 lvm2
-mesa
 neovim
 opendoas
+podman
 reflector
 rsync
-wireless-regdb
