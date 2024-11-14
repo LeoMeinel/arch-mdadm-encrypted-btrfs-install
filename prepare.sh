@@ -366,8 +366,6 @@ lscpu | grep "Vendor ID:" | grep -q "AuthenticAMD" &&
     echo "amd-ucode" >>"$SCRIPT_DIR/pkgs-prepare.txt"
 lshw -C display | grep "vendor:" | grep -q "Advanced Micro Devices, Inc." &&
     {
-        echo "libva-mesa-driver"
-        echo "mesa-vdpau"
         echo "vulkan-radeon"
         echo "xf86-video-amdgpu"
     } >>"$SCRIPT_DIR/pkgs-prepare.txt"
