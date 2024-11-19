@@ -35,8 +35,7 @@ doas su -lc '/dot-files.sh' root
 # Configure clock
 doas timedatectl set-ntp true
 
-# Configure iptables
-# FIXME: Replace with nftables
+# Configure iptables-nft
 # References
 #
 # https://networklessons.com/uncategorized/iptables-example-configuration
@@ -69,11 +68,11 @@ doas iptables -P OUTPUT ACCEPT
 ### Accept loopback
 doas iptables -A INPUT -i lo -j ACCEPT
 ### First packet has to be TCP SYN
-doas iptables -A INPUT -p tcp ! --syn -m state --state NEW -j DROP
+doas iptables -A INPUT -p tcp ! --syn -m conntrack --ctstate NEW -j DROP
 ### Drop all invalid packets
-doas iptables -A INPUT -m state --state INVALID -j DROP
-doas iptables -A FORWARD -m state --state INVALID -j DROP
-doas iptables -A OUTPUT -m state --state INVALID -j DROP
+doas iptables -A INPUT -m conntrack --ctstate INVALID -j DROP
+doas iptables -A FORWARD -m conntrack --ctstate INVALID -j DROP
+doas iptables -A OUTPUT -m conntrack --ctstate INVALID -j DROP
 ### Block packets with bogus TCP flags
 doas iptables -A INPUT -p tcp --tcp-flags FIN,SYN FIN,SYN -j DROP
 doas iptables -A INPUT -p tcp --tcp-flags SYN,RST SYN,RST -j DROP
@@ -86,32 +85,32 @@ doas iptables -A INPUT -p tcp --tcp-flags ALL NONE -j DROP
 ### Drop XMAS packets
 doas iptables -A INPUT -p tcp --tcp-flags ALL ALL -j DROP
 ### Drop excessive TCP RST packets
-doas iptables -A INPUT -p tcp --tcp-flags RST RST -m limit --limit 2/s --limit-burst 2 -j ACCEPT
+doas iptables -N INPUT_PREROUTING
+doas iptables -A INPUT -p tcp --tcp-flags RST RST -m limit --limit 2/s --limit-burst 2 -j INPUT_PREROUTING
 doas iptables -A INPUT -p tcp --tcp-flags RST RST -j DROP
 ### Drop SYN-FLOOD packets
-doas iptables -A INPUT -p tcp -m state --state NEW -m limit --limit 2/second --limit-burst 2 -j ACCEPT
-doas iptables -A INPUT -p tcp -m state --state NEW -j DROP
+doas iptables -A INPUT -p tcp -m conntrack --ctstate NEW -m limit --limit 2/second --limit-burst 2 -j INPUT_PREROUTING
+doas iptables -A INPUT -p tcp -m conntrack --ctstate NEW -j DROP
 ### Drop fragments
 doas iptables -A INPUT -f -j DROP
 doas iptables -A FORWARD -f -j DROP
 doas iptables -A OUTPUT -f -j DROP
 ### Drop SYN packets with suspicious MSS value
-doas iptables -A INPUT -p tcp -m state --state NEW -m tcpmss ! --mss 536:65535 -j DROP
+doas iptables -A INPUT -p tcp -m conntrack --ctstate NEW -m tcpmss ! --mss 536:65535 -j DROP
 ### Block spoofed packets
 doas iptables -A INPUT -s 127.0.0.0/8 ! -i lo -j DROP
 ### Drop ICMP
 doas iptables -A INPUT -p icmp -j DROP
-### Allow http & https
-doas iptables -A INPUT -p tcp --dport 80 -j ACCEPT
-doas iptables -A INPUT -p tcp --dport 443 -j ACCEPT
-### Allow ssh on port 9122 & 9123
-doas iptables -A INPUT -p tcp --dport 9122 -j ACCEPT
-doas iptables -A INPUT -p tcp --dport 9123 -j ACCEPT
+### Allow SSH
+doas iptables -A INPUT_PREROUTING -p tcp --dport 9122 -s 192.168.0.0/16 -j ACCEPT
+doas iptables -A INPUT_PREROUTING -p tcp --dport 9122 -s 127.0.0.0/8 -j ACCEPT
+doas iptables -A INPUT_PREROUTING -p tcp --dport 9122 -j DROP
+# FIXME: Also allow 80,443 on any FORWARD chain for containers
 ### Allow established connections
-doas iptables -A INPUT -m state --state RELATED,ESTABLISHED -j ACCEPT
+doas iptables -A INPUT -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT
 ### Set default policies for chains
 doas iptables -P INPUT DROP
-doas iptables -P FORWARD ACCEPT
+doas iptables -P FORWARD DROP
 doas iptables -P OUTPUT ACCEPT
 ## ipv6
 ### Flush & delete all chains
@@ -131,11 +130,11 @@ doas ip6tables -P OUTPUT ACCEPT
 ### Accept loopback
 doas ip6tables -A INPUT -i lo -j ACCEPT
 ### First packet has to be TCP SYN
-doas ip6tables -A INPUT -p tcp ! --syn -m state --state NEW -j DROP
+doas ip6tables -A INPUT -p tcp ! --syn -m conntrack --ctstate NEW -j DROP
 ### Drop all invalid packets
-doas ip6tables -A INPUT -m state --state INVALID -j DROP
-doas ip6tables -A FORWARD -m state --state INVALID -j DROP
-doas ip6tables -A OUTPUT -m state --state INVALID -j DROP
+doas ip6tables -A INPUT -m conntrack --ctstate INVALID -j DROP
+doas ip6tables -A FORWARD -m conntrack --ctstate INVALID -j DROP
+doas ip6tables -A OUTPUT -m conntrack --ctstate INVALID -j DROP
 ### Block packets with bogus TCP flags
 doas ip6tables -A INPUT -p tcp --tcp-flags FIN,SYN FIN,SYN -j DROP
 doas ip6tables -A INPUT -p tcp --tcp-flags SYN,RST SYN,RST -j DROP
@@ -148,37 +147,34 @@ doas ip6tables -A INPUT -p tcp --tcp-flags ALL NONE -j DROP
 ### Drop XMAS packets
 doas ip6tables -A INPUT -p tcp --tcp-flags ALL ALL -j DROP
 ### Drop excessive TCP RST packets
-doas ip6tables -A INPUT -p tcp --tcp-flags RST RST -m limit --limit 2/s --limit-burst 2 -j ACCEPT
+doas ip6tables -N INPUT_PREROUTING
+doas ip6tables -A INPUT -p tcp --tcp-flags RST RST -m limit --limit 2/s --limit-burst 2 -j INPUT_PREROUTING
 doas ip6tables -A INPUT -p tcp --tcp-flags RST RST -j DROP
 ### Drop SYN-FLOOD packets
-doas ip6tables -A INPUT -p tcp -m state --state NEW -m limit --limit 2/second --limit-burst 2 -j ACCEPT
-doas ip6tables -A INPUT -p tcp -m state --state NEW -j DROP
+doas ip6tables -A INPUT -p tcp -m conntrack --ctstate NEW -m limit --limit 2/second --limit-burst 2 -j INPUT_PREROUTING
+doas ip6tables -A INPUT -p tcp -m conntrack --ctstate NEW -j DROP
 ### Drop fragments
 doas ip6tables -A INPUT -m frag -j DROP
 doas ip6tables -A FORWARD -m frag -j DROP
 doas ip6tables -A OUTPUT -m frag -j DROP
 ### Drop SYN packets with suspicious MSS value
-doas ip6tables -A INPUT -p tcp -m state --state NEW -m tcpmss ! --mss 536:65535 -j DROP
+doas ip6tables -A INPUT -p tcp -m conntrack --ctstate NEW -m tcpmss ! --mss 536:65535 -j DROP
 ### Block spoofed packets
 doas ip6tables -A INPUT -s ::1/128 ! -i lo -j DROP
 ### Drop ICMP
 doas ip6tables -A INPUT -p icmp -j DROP
-### Allow http & https
-doas ip6tables -A INPUT -p tcp --dport 80 -j ACCEPT
-doas ip6tables -A INPUT -p tcp --dport 443 -j ACCEPT
-### Allow ssh on port 9122 & 9123
-doas ip6tables -A INPUT -p tcp --dport 9122 -j ACCEPT
-doas ip6tables -A INPUT -p tcp --dport 9123 -j ACCEPT
+### Allow SSH
+doas ip6tables -A INPUT_PREROUTING -p tcp --dport 9122 -s fe80::/10 -j ACCEPT
+doas ip6tables -A INPUT_PREROUTING -p tcp --dport 9122 -j DROP
+# FIXME: Also allow 80,443 on any FORWARD chain for containers
 ### Allow established connections
-doas ip6tables -A INPUT -m state --state RELATED,ESTABLISHED -j ACCEPT
+doas ip6tables -A INPUT -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT
 ### Set default policies for chains
 doas ip6tables -P INPUT DROP
-doas ip6tables -P FORWARD ACCEPT
+doas ip6tables -P FORWARD DROP
 doas ip6tables -P OUTPUT ACCEPT
-### Save rules to /etc/iptables
-doas sh -c 'iptables-save > /etc/iptables/iptables.rules'
-doas sh -c 'ip6tables-save > /etc/iptables/ip6tables.rules'
-doas chmod 644 /etc/iptables/*.rules
+### Save rules to /etc/nftables.conf
+doas sh -c 'nft -s list ruleset >/etc/nftables.conf'
 
 # Configure secureboot
 # Prompt user
@@ -309,11 +305,8 @@ doas su -c 'rm -rf ~/.local/share/applications/*' "$VIRTUSER"
 doas su -c 'rm -rf ~/.local/share/applications/*' "$HOMEUSER"
 
 # Enable systemd services
-pacman -Qq "iptables" >/dev/null 2>&1 &&
-    {
-        doas systemctl enable ip6tables
-        doas systemctl enable iptables
-    }
+pacman -Qq "nftables" >/dev/null 2>&1 &&
+    systemctl enable nftables.service
 
 # Remove repo
 rm -rf ~/git

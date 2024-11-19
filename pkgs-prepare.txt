@@ -3,7 +3,7 @@ base-devel
 btrfs-progs
 dracut
 git
-iptables
+iptables-nft
 libpwquality
 linux
 linux-firmware
