@@ -3,7 +3,7 @@
 # File: post.sh
 # Author: Leopold Meinel (leo@meinel.dev)
 # -----
-# Copyright (c) 2023 Leopold Meinel & contributors
+# Copyright (c) 2024 Leopold Meinel & contributors
 # SPDX ID: GPL-3.0-or-later
 # URL: https://www.gnu.org/licenses/gpl-3.0-standalone.html
 # -----
@@ -51,7 +51,7 @@ doas timedatectl set-ntp true
 # Set default java
 doas archlinux-java set java-21-openjdk
 
-# Configure iptables-nft
+# Configure nftables
 # References
 #
 # https://networklessons.com/uncategorized/iptables-example-configuration
@@ -66,152 +66,130 @@ doas archlinux-java set java-21-openjdk
 # https://www.ripe.net/publications/docs/ripe-431
 # https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/6/html/security_guide/sect-security_guide-firewalls-malicious_software_and_spoofed_ip_addresses
 #
+### Flush & delete all chains
+doas nft 'flush ruleset'
 ## ipv4
-### Flush & delete all chains
-doas iptables -F
-doas iptables -X
+### Set up new tables
+doas nft 'add table ip filter'
 ### Set up new chains
-doas iptables -L | grep -q "Chain INPUT" ||
-    doas iptables -N INPUT
-doas iptables -L | grep -q "Chain FORWARD" ||
-    doas iptables -N FORWARD
-doas iptables -L | grep -q "Chain OUTPUT" ||
-    doas iptables -N OUTPUT
-### Allow all connections on all chains to start
-doas iptables -P INPUT ACCEPT
-doas iptables -P FORWARD ACCEPT
-doas iptables -P OUTPUT ACCEPT
+doas nft 'add chain ip filter input { type filter hook input priority 0; policy drop; }'
+doas nft 'add chain ip filter forward { type filter hook forward priority 0; policy drop; }'
+doas nft 'add chain ip filter output { type filter hook output priority 0; policy accept; }'
 ### Accept loopback
-doas iptables -A INPUT -i lo -j ACCEPT
+doas nft 'add rule ip filter input iifname "lo" counter accept'
 ### First packet has to be TCP SYN
-doas iptables -A INPUT -p tcp ! --syn -m conntrack --ctstate NEW -j DROP
+doas nft 'add rule ip filter input tcp flags != syn / fin,syn,rst,ack ct state new counter drop'
 ### Drop all invalid packets
-doas iptables -A INPUT -m conntrack --ctstate INVALID -j DROP
-doas iptables -A FORWARD -m conntrack --ctstate INVALID -j DROP
-doas iptables -A OUTPUT -m conntrack --ctstate INVALID -j DROP
+doas nft 'add rule ip filter input ct state invalid counter drop'
+doas nft 'add rule ip filter forward ct state invalid counter drop'
+doas nft 'add rule ip filter output ct state invalid counter drop'
 ### Block packets with bogus TCP flags
-doas iptables -A INPUT -p tcp --tcp-flags FIN,SYN FIN,SYN -j DROP
-doas iptables -A INPUT -p tcp --tcp-flags SYN,RST SYN,RST -j DROP
-doas iptables -A INPUT -p tcp --tcp-flags FIN,RST FIN,RST -j DROP
-doas iptables -A INPUT -p tcp --tcp-flags FIN,ACK FIN -j DROP
-doas iptables -A INPUT -p tcp --tcp-flags ACK,URG URG -j DROP
-doas iptables -A INPUT -p tcp --tcp-flags ACK,PSH PSH -j DROP
+doas nft 'add rule ip filter input tcp flags fin,syn / fin,syn counter drop'
+doas nft 'add rule ip filter input tcp flags syn,rst / syn,rst counter drop'
+doas nft 'add rule ip filter input tcp flags fin,rst / fin,rst counter drop'
+doas nft 'add rule ip filter input tcp flags fin / fin,ack counter drop'
+doas nft 'add rule ip filter input tcp flags urg / ack,urg counter drop'
+doas nft 'add rule ip filter input tcp flags psh / psh,ack counter drop'
 ### Drop NULL packets
-doas iptables -A INPUT -p tcp --tcp-flags ALL NONE -j DROP
+doas nft 'add rule ip filter input tcp flags 0x0 / fin,syn,rst,psh,ack,urg counter drop'
 ### Drop XMAS packets
-doas iptables -A INPUT -p tcp --tcp-flags ALL ALL -j DROP
+doas nft 'add rule ip filter input tcp flags fin,syn,rst,psh,ack,urg / fin,syn,rst,psh,ack,urg counter drop'
 ### Drop excessive TCP RST packets
-doas iptables -N INPUT_PREROUTING
-doas iptables -A INPUT -p tcp --tcp-flags RST RST -m limit --limit 2/s --limit-burst 2 -j INPUT_PREROUTING
-doas iptables -A INPUT -p tcp --tcp-flags RST RST -j DROP
+doas nft 'add chain ip filter input_prerouting'
+doas nft 'add rule ip filter input tcp flags rst limit rate 2/second burst 2 packets counter jump input_prerouting'
+doas nft 'add rule ip filter input tcp flags rst counter drop'
 ### Drop SYN-FLOOD packets
-doas iptables -A INPUT -p tcp -m conntrack --ctstate NEW -m limit --limit 2/second --limit-burst 2 -j INPUT_PREROUTING
-doas iptables -A INPUT -p tcp -m conntrack --ctstate NEW -j DROP
+doas nft 'add rule ip filter input ip protocol tcp ct state new limit rate 2/second burst 2 packets counter jump input_prerouting'
+doas nft 'add rule ip filter input ip protocol tcp ct state new counter drop'
 ### Drop fragments
-doas iptables -A INPUT -f -j DROP
-doas iptables -A FORWARD -f -j DROP
-doas iptables -A OUTPUT -f -j DROP
+doas nft 'add rule ip filter input ip frag-off & 0x1fff != 0 counter drop'
+doas nft 'add rule ip filter forward ip frag-off & 0x1fff != 0 counter drop'
+doas nft 'add rule ip filter output ip frag-off & 0x1fff != 0 counter drop'
 ### Drop SYN packets with suspicious MSS value
-doas iptables -A INPUT -p tcp -m conntrack --ctstate NEW -m tcpmss ! --mss 536:65535 -j DROP
+doas nft 'add rule ip filter input ip protocol tcp ct state new tcp option maxseg size != 536-65535 counter drop'
 ### Block spoofed packets
-doas iptables -A INPUT -s 127.0.0.0/8 ! -i lo -j DROP
+doas nft 'add rule ip filter input iifname != "lo" ip saddr 127.0.0.0/8 counter drop'
 ### Drop ICMP
-doas iptables -A INPUT -p icmp -j DROP
+doas nft 'add rule ip filter input ip protocol icmp counter drop'
 ### Allow SMTP
-doas iptables -A INPUT_PREROUTING -p tcp --dport 25 -j ACCEPT
-doas iptables -A INPUT_PREROUTING -p tcp --dport 587 -j ACCEPT
+doas nft 'add rule ip filter input_prerouting tcp dport 25 counter accept'
+doas nft 'add rule ip filter input_prerouting tcp dport 587 counter accept'
 ### Allow POP & POPS
-doas iptables -A INPUT_PREROUTING -p tcp --dport 110 -j ACCEPT
-doas iptables -A INPUT_PREROUTING -p tcp --dport 995 -j ACCEPT
+doas nft 'add rule ip filter input_prerouting tcp dport 110 counter accept'
+doas nft 'add rule ip filter input_prerouting tcp dport 995 counter accept'
 ### Allow IMAP & IMAPS
-doas iptables -A INPUT_PREROUTING -p tcp --dport 143 -j ACCEPT
-doas iptables -A INPUT_PREROUTING -p tcp --dport 993 -j ACCEPT
+doas nft 'add rule ip filter input_prerouting tcp dport 143 counter accept'
+doas nft 'add rule ip filter input_prerouting tcp dport 993 counter accept'
 ### Allow mDNS
-doas iptables -A INPUT_PREROUTING -p udp --dport 5353 -j ACCEPT
+doas nft 'add rule ip filter input_prerouting udp dport 5353 counter accept'
 ### Allow http & https (for wget)
-doas iptables -A INPUT_PREROUTING -p tcp --dport 80 -j ACCEPT
-doas iptables -A INPUT_PREROUTING -p tcp --dport 443 -j ACCEPT
+doas nft 'add rule ip filter input_prerouting tcp dport 80 counter accept'
+doas nft 'add rule ip filter input_prerouting tcp dport 443 counter accept'
 ### Allow Transmission
-doas iptables -A INPUT_PREROUTING -p udp --dport 51413 -j ACCEPT
+doas nft 'add rule ip filter input_prerouting udp dport 51413 counter accept'
 ### Allow established connections
-doas iptables -A INPUT -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT
-### Set default policies for chains
-doas iptables -P INPUT DROP
-doas iptables -P FORWARD DROP
-doas iptables -P OUTPUT ACCEPT
+doas nft 'add rule ip filter input ct state related,established counter accept'
 ## ipv6
-### Flush & delete all chains
-doas ip6tables -F
-doas ip6tables -X
+### Set up new tables
+doas nft 'add table ip6 filter'
 ### Set up new chains
-doas ip6tables -L | grep -q "Chain INPUT" ||
-    doas ip6tables -N INPUT
-doas ip6tables -L | grep -q "Chain INPUT" ||
-    doas ip6tables -N FORWARD
-doas ip6tables -L | grep -q "Chain INPUT" ||
-    doas ip6tables -N OUTPUT
-### Allow all connections on all chains to start
-doas ip6tables -P INPUT ACCEPT
-doas ip6tables -P FORWARD ACCEPT
-doas ip6tables -P OUTPUT ACCEPT
+doas nft 'add chain ip6 filter input { type filter hook input priority 0; policy drop; }'
+doas nft 'add chain ip6 filter forward { type filter hook forward priority 0; policy drop; }'
+doas nft 'add chain ip6 filter output { type filter hook output priority 0; policy accept; }'
 ### Accept loopback
-doas ip6tables -A INPUT -i lo -j ACCEPT
+doas nft 'add rule ip6 filter input iifname "lo" counter accept'
 ### First packet has to be TCP SYN
-doas ip6tables -A INPUT -p tcp ! --syn -m conntrack --ctstate NEW -j DROP
+doas nft 'add rule ip6 filter input tcp flags != syn / fin,syn,rst,ack ct state new counter drop'
 ### Drop all invalid packets
-doas ip6tables -A INPUT -m conntrack --ctstate INVALID -j DROP
-doas ip6tables -A FORWARD -m conntrack --ctstate INVALID -j DROP
-doas ip6tables -A OUTPUT -m conntrack --ctstate INVALID -j DROP
+doas nft 'add rule ip6 filter input ct state invalid counter drop'
+doas nft 'add rule ip6 filter forward ct state invalid counter drop'
+doas nft 'add rule ip6 filter output ct state invalid counter drop'
 ### Block packets with bogus TCP flags
-doas ip6tables -A INPUT -p tcp --tcp-flags FIN,SYN FIN,SYN -j DROP
-doas ip6tables -A INPUT -p tcp --tcp-flags SYN,RST SYN,RST -j DROP
-doas ip6tables -A INPUT -p tcp --tcp-flags FIN,RST FIN,RST -j DROP
-doas ip6tables -A INPUT -p tcp --tcp-flags FIN,ACK FIN -j DROP
-doas ip6tables -A INPUT -p tcp --tcp-flags ACK,URG URG -j DROP
-doas ip6tables -A INPUT -p tcp --tcp-flags ACK,PSH PSH -j DROP
+doas nft 'add rule ip6 filter input tcp flags fin,syn / fin,syn counter drop'
+doas nft 'add rule ip6 filter input tcp flags syn,rst / syn,rst counter drop'
+doas nft 'add rule ip6 filter input tcp flags fin,rst / fin,rst counter drop'
+doas nft 'add rule ip6 filter input tcp flags fin / fin,ack counter drop'
+doas nft 'add rule ip6 filter input tcp flags urg / ack,urg counter drop'
+doas nft 'add rule ip6 filter input tcp flags psh / psh,ack counter drop'
 ### Drop NULL packets
-doas ip6tables -A INPUT -p tcp --tcp-flags ALL NONE -j DROP
+doas nft 'add rule ip6 filter input tcp flags 0x0 / fin,syn,rst,psh,ack,urg counter drop'
 ### Drop XMAS packets
-doas ip6tables -A INPUT -p tcp --tcp-flags ALL ALL -j DROP
+doas nft 'add rule ip6 filter input tcp flags fin,syn,rst,psh,ack,urg / fin,syn,rst,psh,ack,urg counter drop'
 ### Drop excessive TCP RST packets
-doas ip6tables -N INPUT_PREROUTING
-doas ip6tables -A INPUT -p tcp --tcp-flags RST RST -m limit --limit 2/s --limit-burst 2 -j INPUT_PREROUTING
-doas ip6tables -A INPUT -p tcp --tcp-flags RST RST -j DROP
+doas nft 'add chain ip6 filter input_prerouting'
+doas nft 'add rule ip6 filter input tcp flags rst limit rate 2/second burst 2 packets counter jump input_prerouting'
+doas nft 'add rule ip6 filter input tcp flags rst counter drop'
 ### Drop SYN-FLOOD packets
-doas ip6tables -A INPUT -p tcp -m conntrack --ctstate NEW -m limit --limit 2/second --limit-burst 2 -j INPUT_PREROUTING
-doas ip6tables -A INPUT -p tcp -m conntrack --ctstate NEW -j DROP
+doas nft 'add rule ip6 filter input meta l4proto tcp ct state new limit rate 2/second burst 2 packets counter jump input_prerouting'
+doas nft 'add rule ip6 filter input meta l4proto tcp ct state new counter drop'
 ### Drop fragments
-doas ip6tables -A INPUT -m frag -j DROP
-doas ip6tables -A FORWARD -m frag -j DROP
-doas ip6tables -A OUTPUT -m frag -j DROP
+doas nft 'add rule ip6 filter input counter drop'
+doas nft 'add rule ip6 filter forward counter drop'
+doas nft 'add rule ip6 filter output counter drop'
 ### Drop SYN packets with suspicious MSS value
-doas ip6tables -A INPUT -p tcp -m conntrack --ctstate NEW -m tcpmss ! --mss 536:65535 -j DROP
+doas nft 'add rule ip6 filter input meta l4proto tcp ct state new tcp option maxseg size != 536-65535 counter drop'
 ### Block spoofed packets
-doas ip6tables -A INPUT -s ::1/128 ! -i lo -j DROP
+doas nft 'add rule ip6 filter input iifname != "lo" ip6 saddr ::1 counter drop'
 ### Drop ICMP
-doas ip6tables -A INPUT -p icmp -j DROP
+doas nft 'add rule ip6 filter input meta l4proto icmp counter drop'
 ### Allow SMTP
-doas ip6tables -A INPUT_PREROUTING -p tcp --dport 25 -j ACCEPT
-doas ip6tables -A INPUT_PREROUTING -p tcp --dport 587 -j ACCEPT
+doas nft 'add rule ip6 filter input_prerouting tcp dport 25 counter accept'
+doas nft 'add rule ip6 filter input_prerouting tcp dport 587 counter accept'
 ### Allow POP & POPS
-doas ip6tables -A INPUT_PREROUTING -p tcp --dport 110 -j ACCEPT
-doas ip6tables -A INPUT_PREROUTING -p tcp --dport 995 -j ACCEPT
+doas nft 'add rule ip6 filter input_prerouting tcp dport 110 counter accept'
+doas nft 'add rule ip6 filter input_prerouting tcp dport 995 counter accept'
 ### Allow IMAP & IMAPS
-doas ip6tables -A INPUT_PREROUTING -p tcp --dport 143 -j ACCEPT
-doas ip6tables -A INPUT_PREROUTING -p tcp --dport 993 -j ACCEPT
+doas nft 'add rule ip6 filter input_prerouting tcp dport 143 counter accept'
+doas nft 'add rule ip6 filter input_prerouting tcp dport 993 counter accept'
 ### Allow mDNS
-doas ip6tables -A INPUT_PREROUTING -p udp --dport 5353 -j ACCEPT
+doas nft 'add rule ip6 filter input_prerouting udp dport 5353 counter accept'
 ### Allow http & https (for wget)
-doas ip6tables -A INPUT_PREROUTING -p tcp --dport 80 -j ACCEPT
-doas ip6tables -A INPUT_PREROUTING -p tcp --dport 443 -j ACCEPT
+doas nft 'add rule ip6 filter input_prerouting tcp dport 80 counter accept'
+doas nft 'add rule ip6 filter input_prerouting tcp dport 443 counter accept'
 ### Allow Transmission
-doas ip6tables -A INPUT_PREROUTING -p udp --dport 51413 -j ACCEPT
+doas nft 'add rule ip6 filter input_prerouting udp dport 51413 counter accept'
 ### Allow established connections
-doas ip6tables -A INPUT -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT
-### Set default policies for chains
-doas ip6tables -P INPUT DROP
-doas ip6tables -P FORWARD DROP
-doas ip6tables -P OUTPUT ACCEPT
+doas nft 'add rule ip6 filter input ct state related,established counter accept'
 ### Save rules to /etc/nftables.conf
 doas sh -c 'nft -s list ruleset >/etc/nftables.conf'
 
