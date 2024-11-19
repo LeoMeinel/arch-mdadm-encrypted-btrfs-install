@@ -94,7 +94,7 @@ polkit-gnome
 postfix
 procs
 python-pynitrokey
-qemu-desktop
+qemu-full
 qt5-wayland
 qt5ct
 qt6ct
