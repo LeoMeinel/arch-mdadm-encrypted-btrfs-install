@@ -305,6 +305,12 @@ STRING="^#MulticastDNS=.*"
 grep -q "$STRING" "$FILE" || sed_exit
 sed -i "s/$STRING/MulticastDNS=no/" "$FILE"
 ### END sed
+## Configure /etc/libvirt/network.conf
+{
+    echo ''
+    echo '# Custom'
+    echo 'firewall_backend = "iptables"'
+} >>/etc/libvirt/network.conf
 ## Lid switching
 ### Configure /etc/systemd/logind.conf
 ### START sed
