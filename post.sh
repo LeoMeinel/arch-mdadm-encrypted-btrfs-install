@@ -300,8 +300,6 @@ doas sed -i "/$STRING/a BatchInstall" "$FILE"
 gpgconf --kill all
 sleep 5
 ## AUR packages
-# FIXME: The next line is a temporary fix; see: https://aur.archlinux.org/packages/python-rchitect#comment-998515
-paru -S --noprogressbar --noconfirm --needed python-pip
 paru -S --noprogressbar --noconfirm --needed - <"$SCRIPT_DIR/pkgs-post.txt"
 paru -Syu --noprogressbar --noconfirm
 paru -Scc
