@@ -34,7 +34,6 @@ set +e
 timeout 5 firefox --headless
 doas su -c 'timeout 5 firefox --headless' "$VIRTUSER"
 doas su -c 'timeout 5 firefox --headless' "$HOMEUSER"
-doas su -c 'timeout 5 firefox --headless' "$YOUTUBEUSER"
 doas su -c 'timeout 5 firefox --headless' "$GUESTUSER"
 ## Fail on error
 set -e
@@ -43,7 +42,6 @@ set -e
 /dot-files.sh setup
 doas su -lc '/dot-files.sh setup' "$VIRTUSER"
 doas su -lc '/dot-files.sh setup' "$HOMEUSER"
-doas su -lc '/dot-files.sh setup' "$YOUTUBEUSER"
 doas su -lc '/dot-files.sh setup' "$GUESTUSER"
 doas su -lc '/dot-files.sh setup-min' root
 
@@ -312,7 +310,6 @@ paru -Scc
 /dot-files.sh vscodium
 doas su -lc '/dot-files.sh vscodium' "$VIRTUSER"
 doas su -lc '/dot-files.sh vscodium' "$HOMEUSER"
-doas su -lc '/dot-files.sh vscodium' "$YOUTUBEUSER"
 doas su -lc '/dot-files.sh vscodium' "$GUESTUSER"
 chmod +x ~/post-gui.sh
 
