@@ -3,7 +3,7 @@
 # File: post.sh
 # Author: Leopold Meinel (leo@meinel.dev)
 # -----
-# Copyright (c) 2024 Leopold Meinel & contributors
+# Copyright (c) 2025 Leopold Meinel & contributors
 # SPDX ID: GPL-3.0-or-later
 # URL: https://www.gnu.org/licenses/gpl-3.0-standalone.html
 # -----
@@ -259,28 +259,11 @@ doas sed -i "/$STRING/a BatchInstall" "$FILE"
 gpgconf --kill all
 sleep 5
 ## AUR packages
+# FIXME: The next line is a temporary fix; see: https://aur.archlinux.org/packages/python-rchitect#comment-998515
+paru -S --noprogressbar --noconfirm --needed python-pip
 paru -S --noprogressbar --noconfirm --needed - <"$SCRIPT_DIR/pkgs-post.txt"
 paru -Syu --noprogressbar --noconfirm
 paru -Scc
-
-# Clean firecfg
-doas firecfg --clean
-
-# Configure firejail
-## START sed
-FILE=/etc/firejail/firecfg.config
-STRINGS=("code-oss" "code" "codium" "dnsmasq" "lollypop" "nextcloud-desktop" "nextcloud" "shotwell" "signal-desktop" "transmission-cli" "transmission-create" "transmission-daemon" "transmission-edit" "transmission-gtk" "transmission-remote" "transmission-show" "vscodium")
-for string in "${STRINGS[@]}"; do
-    grep -q "$string" "$FILE" || sed_exit
-    doas sed -i "s/^$string$/#$string #arch-install/" "$FILE"
-done
-## END sed
-doas firecfg --add-users root "$SYSUSER" "$VIRTUSER" "$HOMEUSER"
-doas apparmor_parser -r /etc/apparmor.d/firejail-default
-doas firecfg
-rm -rf ~/.local/share/applications/*
-doas su -c 'rm -rf ~/.local/share/applications/*' "$VIRTUSER"
-doas su -c 'rm -rf ~/.local/share/applications/*' "$HOMEUSER"
 
 # Enable systemd services
 pacman -Qq "nftables" >/dev/null 2>&1 &&

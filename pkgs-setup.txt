@@ -1,3 +1,4 @@
+7zip
 apparmor
 arch-audit
 cmake
@@ -37,7 +38,6 @@ ntfs-3g
 openbsd-netcat
 openssh
 oxipng
-p7zip
 pacman-contrib
 pam-u2f
 perl-rename
