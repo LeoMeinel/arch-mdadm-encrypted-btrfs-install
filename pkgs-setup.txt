@@ -14,7 +14,6 @@ blueman
 bluez
 bluez-utils
 brightnessctl
-calibre
 celluloid
 cmake
 cups
@@ -54,7 +53,6 @@ jdk8-openjdk
 jpegoptim
 jq
 kanshi
-kdenlive
 libavif
 libheif
 libjxl
