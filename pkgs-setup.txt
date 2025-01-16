@@ -1,3 +1,4 @@
+7zip
 alacritty
 alsa-utils
 apparmor
@@ -72,7 +73,6 @@ macchina
 man-db
 mtools
 network-manager-applet
-networkmanager
 nextcloud-client
 noto-fonts
 nss-mdns
@@ -81,7 +81,6 @@ nwg-bar
 openbsd-netcat
 openssh
 oxipng
-p7zip
 pacman-contrib
 pam-u2f
 papirus-icon-theme

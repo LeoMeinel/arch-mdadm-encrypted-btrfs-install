@@ -1,5 +1,4 @@
 com.github.Matoking.protontricks
-com.github.zadam.trilium
 com.nitrokey.nitrokey-app2
 com.valvesoftware.Steam
 io.freetubeapp.FreeTube

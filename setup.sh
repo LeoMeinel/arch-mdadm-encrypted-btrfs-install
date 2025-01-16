@@ -3,7 +3,7 @@
 # File: setup.sh
 # Author: Leopold Meinel (leo@meinel.dev)
 # -----
-# Copyright (c) 2024 Leopold Meinel & contributors
+# Copyright (c) 2025 Leopold Meinel & contributors
 # SPDX ID: GPL-3.0-or-later
 # URL: https://www.gnu.org/licenses/gpl-3.0-standalone.html
 # -----
@@ -309,7 +309,7 @@ sed -i "s/$STRING/MulticastDNS=no/" "$FILE"
 {
     echo ''
     echo '# Custom'
-    echo 'firewall_backend = "iptables"'
+    echo 'firewall_backend = "nftables"'
 } >>/etc/libvirt/network.conf
 ## Lid switching
 ### Configure /etc/systemd/logind.conf

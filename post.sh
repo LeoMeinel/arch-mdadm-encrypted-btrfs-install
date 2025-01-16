@@ -3,7 +3,7 @@
 # File: post.sh
 # Author: Leopold Meinel (leo@meinel.dev)
 # -----
-# Copyright (c) 2024 Leopold Meinel & contributors
+# Copyright (c) 2025 Leopold Meinel & contributors
 # SPDX ID: GPL-3.0-or-later
 # URL: https://www.gnu.org/licenses/gpl-3.0-standalone.html
 # -----
@@ -73,7 +73,8 @@ doas nft 'flush ruleset'
 doas nft 'add table ip filter'
 ### Set up new chains
 doas nft 'add chain ip filter input { type filter hook input priority 0; policy drop; }'
-doas nft 'add chain ip filter forward { type filter hook forward priority 0; policy drop; }'
+# NOTE: We need to accept on the forward chain for libvirtd networking to work at all. There might be better methods, but this works and is safe if nothing else uses the forward chain
+doas nft 'add chain ip filter forward { type filter hook forward priority 0; policy accept; }'
 doas nft 'add chain ip filter output { type filter hook output priority 0; policy accept; }'
 ### Accept loopback
 doas nft 'add rule ip filter input iifname "lo" counter accept'
@@ -134,7 +135,8 @@ doas nft 'add rule ip filter input ct state related,established counter accept'
 doas nft 'add table ip6 filter'
 ### Set up new chains
 doas nft 'add chain ip6 filter input { type filter hook input priority 0; policy drop; }'
-doas nft 'add chain ip6 filter forward { type filter hook forward priority 0; policy drop; }'
+# NOTE: We need to accept on the forward chain for libvirtd networking to work at all. There might be better methods, but this works and is safe if nothing else uses the forward chain
+doas nft 'add chain ip6 filter forward { type filter hook forward priority 0; policy accept; }'
 doas nft 'add chain ip6 filter output { type filter hook output priority 0; policy accept; }'
 ### Accept loopback
 doas nft 'add rule ip6 filter input iifname "lo" counter accept'
