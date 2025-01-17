@@ -1,7 +1,6 @@
 kvantum-theme-arc
 librewolf-bin
 rimpy-bin
-selectdefaultapplication-fork-git
 snapper-gui-git
 swaylock-effects
 ttf-hasklig
