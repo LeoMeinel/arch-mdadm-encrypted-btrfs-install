@@ -1,5 +1,6 @@
+com.github.Matoking.protontricks
 com.nitrokey.nitrokey-app2
-com.sweethome3d.Sweethome3d
+com.valvesoftware.Steam
 io.freetubeapp.FreeTube
 org.prismlauncher.PrismLauncher
-org.raspberrypi.rpi-imager
+org.winehq.Wine/x86_64/stable-24.08

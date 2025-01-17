@@ -1,7 +1,6 @@
 kvantum-theme-arc
 librewolf-bin
-ocrmypdf
-radian
+rimpy-bin
 snapper-gui-git
 swaylock-effects
 ttf-hasklig
