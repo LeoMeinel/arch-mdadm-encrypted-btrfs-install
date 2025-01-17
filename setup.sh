@@ -482,10 +482,9 @@ chmod 644 /efi/loader/loader.conf
 
 # Enable systemd services
 pacman -Qq "apparmor" >/dev/null 2>&1 &&
-    {
-        systemctl enable apparmor.service
-        systemctl enable auditd.service
-    }
+    systemctl enable apparmor.service
+pacman -Qq "audit" >/dev/null 2>&1 &&
+    systemctl enable auditd.service
 pacman -Qq "containerd" >/dev/null 2>&1 &&
     systemctl enable containerd.service
 pacman -Qq "logwatch" >/dev/null 2>&1 &&
