@@ -47,7 +47,6 @@ htop
 hwinfo
 hyperfine
 inetutils
-obs-studio
 jdk17-openjdk
 jdk21-openjdk
 jdk8-openjdk
