@@ -47,7 +47,6 @@ groupadd -r usbguard
 useradd -ms /bin/bash -G adm,audit,log,rfkill,sys,systemd-journal,usbguard,wheel,video "$SYSUSER"
 useradd -ms /bin/bash -G libvirt,video "$VIRTUSER"
 useradd -ms /bin/bash -G video "$HOMEUSER"
-useradd -ms /bin/bash -G video "$YOUTUBEUSER"
 useradd -ms /bin/bash -G video "$GUESTUSER"
 echo "#################################################################"
 echo "#                      _    _           _   _                   #"
@@ -70,8 +69,6 @@ echo "Enter password for $VIRTUSER"
 passwd "$VIRTUSER"
 echo "Enter password for $HOMEUSER"
 passwd "$HOMEUSER"
-echo "Enter password for $YOUTUBEUSER"
-passwd "$YOUTUBEUSER"
 echo "Enter password for $GUESTUSER"
 passwd "$GUESTUSER"
 
@@ -381,7 +378,7 @@ sed -i "s/$STRING/AutoEnable=true/" "$FILE"
 } >/etc/dracut.conf.d/modules.conf
 ## Configure /etc/dracut.conf.d/cmdline.conf
 DISK1P2UUID="$(blkid -s UUID -o value "$DISK1P2")"
-PARAMETERS="rd.luks.uuid=luks-$MD0UUID rd.lvm.lv=vg0/lv0 rd.md.uuid=$DISK1P2UUID root=/dev/mapper/vg0-lv0 rootfstype=btrfs rootflags=rw,noatime,compress=zstd:3,ssd,discard=async,space_cache=v2,subvolid=256,subvol=/@ rd.lvm.lv=vg0/lv1 rd.lvm.lv=vg0/lv2 rd.lvm.lv=vg0/lv3 rd.vconsole.unicode rd.vconsole.keymap=$KEYMAP loglevel=3 bgrt_disable audit=1 lsm=landlock,lockdown,yama,integrity,apparmor,bpf iommu=pt zswap.enabled=0 lockdown=integrity module.sig_enforce=1"
+PARAMETERS="rd.luks.uuid=luks-$MD0UUID rd.lvm.lv=vg0/lv0 rd.md.uuid=$DISK1P2UUID root=/dev/mapper/vg0-lv0 rootfstype=btrfs rootflags=rw,noatime,compress=zstd:3,ssd,discard=async,space_cache=v2,subvolid=256,subvol=/@ rd.lvm.lv=vg0/lv1 rd.lvm.lv=vg0/lv2 rd.lvm.lv=vg0/lv3 rd.vconsole.unicode rd.vconsole.keymap=$KEYMAP loglevel=3 bgrt_disable audit=0 lsm=landlock,lockdown,yama,integrity,apparmor,bpf iommu=pt zswap.enabled=0 lockdown=integrity module.sig_enforce=1 tsc=reliable clocksource=tsc cpufreq.default_governor=performance"
 #### If on intel set kernel parameter intel_iommu=on
 pacman -Qq "intel-ucode" >/dev/null 2>&1 &&
     PARAMETERS="${PARAMETERS} intel_iommu=on"
@@ -438,15 +435,17 @@ chmod 755 /usr/local/bin/ex
 chmod 755 /usr/local/bin/freetube
 chmod 755 /usr/local/bin/nitrokey-app
 chmod 755 /usr/local/bin/prismlauncher
-chmod 755 /usr/local/bin/rpi-imager
+chmod 755 /usr/local/bin/protontricks
+chmod 755 /usr/local/bin/steam
 chmod 755 /usr/local/bin/sway-logout
-chmod 755 /usr/local/bin/sweethome3d
 chmod 755 /usr/local/bin/trilium
 chmod 755 /usr/local/bin/vedit
 chmod 755 /usr/local/bin/vi
 chmod 755 /usr/local/bin/view
 chmod 755 /usr/local/bin/vim
 chmod 755 /usr/local/bin/vimdiff
+chmod 755 /usr/local/bin/wine
+chmod 755 /usr/local/bin/winetricks
 
 # Configure /usr
 ## Configure /usr/share/snapper/config-templates/default & configure snapper configs
@@ -565,8 +564,6 @@ chmod 644 /efi/loader/loader.conf
 # Enable systemd services
 pacman -Qq "apparmor" >/dev/null 2>&1 &&
     systemctl enable apparmor.service
-pacman -Qq "audit" >/dev/null 2>&1 &&
-    systemctl enable auditd.service
 pacman -Qq "avahi" >/dev/null 2>&1 &&
     systemctl enable avahi-daemon.service
 pacman -Qq "bluez" >/dev/null 2>&1 &&
