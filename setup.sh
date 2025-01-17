@@ -563,9 +563,7 @@ chmod 644 /efi/loader/loader.conf
 
 # Enable systemd services
 pacman -Qq "apparmor" >/dev/null 2>&1 &&
-    {
-        systemctl enable apparmor.service
-    }
+    systemctl enable apparmor.service
 pacman -Qq "avahi" >/dev/null 2>&1 &&
     systemctl enable avahi-daemon.service
 pacman -Qq "bluez" >/dev/null 2>&1 &&
@@ -573,7 +571,10 @@ pacman -Qq "bluez" >/dev/null 2>&1 &&
 pacman -Qq "cups" >/dev/null 2>&1 &&
     systemctl enable cups.service
 pacman -Qq "libvirt" >/dev/null 2>&1 &&
-    systemctl enable libvirtd.service
+    {
+        systemctl enable libvirtd.socket
+        systemctl enable virtlogd.socket
+    }
 pacman -Qq "logwatch" >/dev/null 2>&1 &&
     systemctl enable logwatch.timer
 pacman -Qq "networkmanager" >/dev/null 2>&1 &&
