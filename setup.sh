@@ -171,8 +171,8 @@ pacman -Syu --noprogressbar --noconfirm --needed - <"$SCRIPT_DIR/pkgs-setup.txt"
 DEPENDENCIES=""
 pacman -Qq "apparmor" >/dev/null 2>&1 &&
     DEPENDENCIES+=$'\npython-notify2\npython-psutil'
-pacman -Qq "podman" >/dev/null 2>&1 &&
-    DEPENDENCIES+=$'\nslirp4netns\npodman-compose\nnetavark\naardvark-dns'
+pacman -Qq "kdenlive" >/dev/null 2>&1 &&
+    DEPENDENCIES+=$'\nmediainfo'
 pacman -Qq "libvirt" >/dev/null 2>&1 &&
     DEPENDENCIES+=$'\ndnsmasq'
 pacman -Qq "lollypop" >/dev/null 2>&1 &&
@@ -181,6 +181,8 @@ pacman -Qq "mpv" >/dev/null 2>&1 &&
     DEPENDENCIES+=$'\nyt-dlp'
 pacman -Qq "pipewire" >/dev/null 2>&1 &&
     DEPENDENCIES+=$'\npipewire-alsa\npipewire-pulse'
+pacman -Qq "podman" >/dev/null 2>&1 &&
+    DEPENDENCIES+=$'\nslirp4netns\npodman-compose\nnetavark\naardvark-dns'
 pacman -Qq "r" >/dev/null 2>&1 &&
     DEPENDENCIES+=$'\ngcc-fortran\ntk'
 pacman -Qq "system-config-printer" >/dev/null 2>&1 &&
