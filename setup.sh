@@ -149,6 +149,9 @@ FILE=/etc/makepkg.conf
 STRING="^#PACMAN_AUTH=.*"
 grep -q "$STRING" "$FILE" || sed_exit
 sed -i "s/$STRING/PACMAN_AUTH=(doas)/" "$FILE"
+STRING="OPTIONS=(strip docs !libtool !staticlibs emptydirs zipman purge debug lto)"
+grep -q "$STRING" "$FILE" || sed_exit
+sed -i "s/$STRING/OPTIONS=(strip docs !libtool !staticlibs emptydirs zipman purge !debug lto)/" "$FILE"
 ###
 FILE=/etc/pacman.conf
 STRING="^#Color"
