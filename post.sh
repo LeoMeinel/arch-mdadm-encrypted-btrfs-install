@@ -73,7 +73,6 @@ doas nft 'flush ruleset'
 doas nft 'add table ip filter'
 ### Set up new chains
 doas nft 'add chain ip filter input { type filter hook input priority 0; policy drop; }'
-# NOTE: We need to accept on the forward chain for libvirtd networking to work at all. There might be better methods, but this works and is safe if nothing else uses the forward chain
 doas nft 'add chain ip filter forward { type filter hook forward priority 0; policy drop; }'
 doas nft 'add chain ip filter output { type filter hook output priority 0; policy accept; }'
 ### Allow established connections
@@ -141,7 +140,6 @@ doas nft 'add rule ip filter forward oifname "virbr0" counter accept'
 doas nft 'add table ip6 filter'
 ### Set up new chains
 doas nft 'add chain ip6 filter input { type filter hook input priority 0; policy drop; }'
-# NOTE: We need to accept on the forward chain for libvirtd networking to work at all. There might be better methods, but this works and is safe if nothing else uses the forward chain
 doas nft 'add chain ip6 filter forward { type filter hook forward priority 0; policy drop; }'
 doas nft 'add chain ip6 filter output { type filter hook output priority 0; policy accept; }'
 ### Allow established connections
