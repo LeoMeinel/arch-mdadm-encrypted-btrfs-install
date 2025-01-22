@@ -103,6 +103,9 @@ doas nft 'add rule ip filter input tcp flags rst counter drop'
 ### Drop SYN-FLOOD packets
 doas nft 'add rule ip filter input ip protocol tcp ct state new limit rate 2/second burst 2 packets counter jump input_prerouting'
 doas nft 'add rule ip filter input ip protocol tcp ct state new counter drop'
+### Rate-limit UDP packets
+doas nft 'add rule ip filter input ip protocol udp ct state new limit rate 2/second burst 2 packets counter jump input_prerouting'
+doas nft 'add rule ip filter input ip protocol udp ct state new counter drop'
 ### Drop fragments
 doas nft 'add rule ip filter input ip frag-off & 0x1fff != 0 counter drop'
 doas nft 'add rule ip filter forward ip frag-off & 0x1fff != 0 counter drop'
@@ -170,10 +173,9 @@ doas nft 'add rule ip6 filter input tcp flags rst counter drop'
 ### Drop SYN-FLOOD packets
 doas nft 'add rule ip6 filter input meta l4proto tcp ct state new limit rate 2/second burst 2 packets counter jump input_prerouting'
 doas nft 'add rule ip6 filter input meta l4proto tcp ct state new counter drop'
-### Drop fragments
-doas nft 'add rule ip6 filter input counter drop'
-doas nft 'add rule ip6 filter forward counter drop'
-doas nft 'add rule ip6 filter output counter drop'
+### Rate-limit UDP packets
+doas nft 'add rule ip6 filter input meta l4proto udp ct state new limit rate 2/second burst 2 packets counter jump input_prerouting'
+doas nft 'add rule ip6 filter input meta l4proto udp ct state new counter drop'
 ### Drop SYN packets with suspicious MSS value
 doas nft 'add rule ip6 filter input meta l4proto tcp ct state new tcp option maxseg size != 536-65535 counter drop'
 ### Block spoofed packets
