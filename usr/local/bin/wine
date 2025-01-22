@@ -1,6 +1,6 @@
 #!/usr/bin/env sh
 ###
-# File: sweethome3d
+# File: wine
 # Author: Leopold Meinel (leo@meinel.dev)
 # -----
 # Copyright (c) 2024 Leopold Meinel & contributors
@@ -9,4 +9,4 @@
 # -----
 ###
 
-exec flatpak run com.sweethome3d.Sweethome3d "$@"
+exec flatpak run org.winehq.Wine "$@"
