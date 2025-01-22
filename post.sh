@@ -59,6 +59,8 @@ doas nft 'add table ip filter'
 doas nft 'add chain ip filter input { type filter hook input priority 0; policy drop; }'
 doas nft 'add chain ip filter forward { type filter hook forward priority 0; policy drop; }'
 doas nft 'add chain ip filter output { type filter hook output priority 0; policy accept; }'
+### Allow established connections
+doas nft 'add rule ip filter input ct state related,established counter accept'
 ### Accept loopback
 doas nft 'add rule ip filter input iifname "lo" counter accept'
 ### First packet has to be TCP SYN
@@ -100,8 +102,6 @@ doas nft 'add rule ip filter input_prerouting ip saddr 192.168.0.0/16 tcp dport 
 doas nft 'add rule ip filter input_prerouting ip saddr 127.0.0.0/8 tcp dport 9122 counter accept'
 doas nft 'add rule ip filter input_prerouting tcp dport 9122 counter drop'
 # FIXME: Also allow 80,443 on any FORWARD chain for containers
-### Allow established connections
-doas nft 'add rule ip filter input ct state related,established counter accept'
 ## ipv6
 ### Set up new tables
 doas nft 'add table ip6 filter'
@@ -109,6 +109,8 @@ doas nft 'add table ip6 filter'
 doas nft 'add chain ip6 filter input { type filter hook input priority 0; policy drop; }'
 doas nft 'add chain ip6 filter forward { type filter hook forward priority 0; policy drop; }'
 doas nft 'add chain ip6 filter output { type filter hook output priority 0; policy accept; }'
+### Allow established connections
+doas nft 'add rule ip6 filter input ct state related,established counter accept'
 ### Accept loopback
 doas nft 'add rule ip6 filter input iifname "lo" counter accept'
 ### First packet has to be TCP SYN
@@ -149,8 +151,6 @@ doas nft 'add rule ip6 filter input meta l4proto icmp counter drop'
 nft 'add rule ip6 filter INPUT_PREROUTING ip6 saddr fe80::/10 tcp dport 9122 counter accept'
 nft 'add rule ip6 filter INPUT_PREROUTING tcp dport 9122 counter drop'
 # FIXME: Also allow 80,443 on any FORWARD chain for containers
-### Allow established connections
-doas nft 'add rule ip6 filter input ct state related,established counter accept'
 ### Save rules to /etc/nftables.conf
 doas sh -c 'nft -s list ruleset >/etc/nftables.conf'
 
