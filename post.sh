@@ -74,8 +74,10 @@ doas nft 'add table ip filter'
 ### Set up new chains
 doas nft 'add chain ip filter input { type filter hook input priority 0; policy drop; }'
 # NOTE: We need to accept on the forward chain for libvirtd networking to work at all. There might be better methods, but this works and is safe if nothing else uses the forward chain
-doas nft 'add chain ip filter forward { type filter hook forward priority 0; policy accept; }'
+doas nft 'add chain ip filter forward { type filter hook forward priority 0; policy drop; }'
 doas nft 'add chain ip filter output { type filter hook output priority 0; policy accept; }'
+### Allow established connections
+doas nft 'add rule ip filter input ct state related,established counter accept'
 ### Accept loopback
 doas nft 'add rule ip filter input iifname "lo" counter accept'
 ### First packet has to be TCP SYN
@@ -112,6 +114,9 @@ doas nft 'add rule ip filter input ip protocol tcp ct state new tcp option maxse
 doas nft 'add rule ip filter input iifname != "lo" ip saddr 127.0.0.0/8 counter drop'
 ### Drop ICMP
 doas nft 'add rule ip filter input ip protocol icmp counter drop'
+### Allow interface virbr0 (input_prerouting)
+doas nft 'add rule ip filter input_prerouting iifname "virbr0" udp dport 53 counter accept'
+doas nft 'add rule ip filter input_prerouting iifname "virbr0" udp dport 67 counter accept'
 ### Allow SMTP
 doas nft 'add rule ip filter input_prerouting tcp dport 25 counter accept'
 doas nft 'add rule ip filter input_prerouting tcp dport 587 counter accept'
@@ -128,16 +133,19 @@ doas nft 'add rule ip filter input_prerouting tcp dport 80 counter accept'
 doas nft 'add rule ip filter input_prerouting tcp dport 443 counter accept'
 ### Allow Transmission
 doas nft 'add rule ip filter input_prerouting udp dport 51413 counter accept'
-### Allow established connections
-doas nft 'add rule ip filter input ct state related,established counter accept'
+### Allow interface virbr0 (forward)
+doas nft 'add rule ip filter forward iifname "virbr0" counter accept'
+doas nft 'add rule ip filter forward oifname "virbr0" counter accept'
 ## ipv6
 ### Set up new tables
 doas nft 'add table ip6 filter'
 ### Set up new chains
 doas nft 'add chain ip6 filter input { type filter hook input priority 0; policy drop; }'
 # NOTE: We need to accept on the forward chain for libvirtd networking to work at all. There might be better methods, but this works and is safe if nothing else uses the forward chain
-doas nft 'add chain ip6 filter forward { type filter hook forward priority 0; policy accept; }'
+doas nft 'add chain ip6 filter forward { type filter hook forward priority 0; policy drop; }'
 doas nft 'add chain ip6 filter output { type filter hook output priority 0; policy accept; }'
+### Allow established connections
+doas nft 'add rule ip6 filter input ct state related,established counter accept'
 ### Accept loopback
 doas nft 'add rule ip6 filter input iifname "lo" counter accept'
 ### First packet has to be TCP SYN
@@ -174,6 +182,9 @@ doas nft 'add rule ip6 filter input meta l4proto tcp ct state new tcp option max
 doas nft 'add rule ip6 filter input iifname != "lo" ip6 saddr ::1 counter drop'
 ### Drop ICMP
 doas nft 'add rule ip6 filter input meta l4proto icmp counter drop'
+### Allow interface virbr0 (input_prerouting)
+doas nft 'add rule ip6 filter input_prerouting iifname "virbr0" udp dport 53 counter accept'
+doas nft 'add rule ip6 filter input_prerouting iifname "virbr0" udp dport 67 counter accept'
 ### Allow SMTP
 doas nft 'add rule ip6 filter input_prerouting tcp dport 25 counter accept'
 doas nft 'add rule ip6 filter input_prerouting tcp dport 587 counter accept'
@@ -190,8 +201,9 @@ doas nft 'add rule ip6 filter input_prerouting tcp dport 80 counter accept'
 doas nft 'add rule ip6 filter input_prerouting tcp dport 443 counter accept'
 ### Allow Transmission
 doas nft 'add rule ip6 filter input_prerouting udp dport 51413 counter accept'
-### Allow established connections
-doas nft 'add rule ip6 filter input ct state related,established counter accept'
+### Allow interface virbr0 (forward)
+doas nft 'add rule ip6 filter forward iifname "virbr0" counter accept'
+doas nft 'add rule ip6 filter forward oifname "virbr0" counter accept'
 ### Save rules to /etc/nftables.conf
 doas sh -c 'nft -s list ruleset >/etc/nftables.conf'
 
