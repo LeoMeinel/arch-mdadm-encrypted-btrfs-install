@@ -4,7 +4,7 @@ My personal Arch Linux install script using LUKS2 encryption, LVM and btrfs.
 
 RAID can also be used.
 
-Meant for general purpose systems.
+Meant for systems that mainly run steam and other games.
 
 ## Info
 
@@ -14,7 +14,7 @@ Meant for general purpose systems.
 
 :warning: | All data on selected disks will be wiped!
 
-:exclamation: | Follow [these instructions](https://github.com/leomeinel/arch-install/blob/main/virt-manager.md) for virt-manager.
+:exclamation: | Follow [these instructions](https://github.com/leomeinel/arch-install/blob/games/virt-manager.md) for virt-manager.
 
 ## Pre-installation
 
@@ -25,7 +25,7 @@ Meant for general purpose systems.
 ```sh
 pacman -Sy
 pacman -S git
-git clone https://github.com/leomeinel/arch-install.git
+git clone -b games https://github.com/leomeinel/arch-install.git
 chmod +x /root/arch-install/prepare.sh
 /root/arch-install/prepare.sh
 arch-chroot /mnt
