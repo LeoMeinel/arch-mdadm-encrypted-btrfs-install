@@ -150,8 +150,8 @@ doas nft 'add rule ip6 filter input iifname != "lo" ip6 saddr ::1 counter drop'
 ### Drop ICMP
 doas nft 'add rule ip6 filter input meta l4proto icmp counter drop'
 ### Allow SSH
-nft 'add rule ip6 filter input_prerouting ip6 saddr fe80::/10 tcp dport 9122 counter accept'
-nft 'add rule ip6 filter input_prerouting tcp dport 9122 counter drop'
+doas nft 'add rule ip6 filter input_prerouting ip6 saddr fe80::/10 tcp dport 9122 counter accept'
+doas nft 'add rule ip6 filter input_prerouting tcp dport 9122 counter drop'
 # FIXME: Also allow 80,443 on any FORWARD chain for containers
 ### Save rules to /etc/nftables.conf
 doas sh -c 'nft -s list ruleset >/etc/nftables.conf'
