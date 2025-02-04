@@ -1,11 +1,1 @@
-kvantum-theme-arc
-librewolf-bin
-ocrmypdf
-radian
-snapper-gui-git
-swaylock-effects
-ttf-hasklig
-usbguard-notifier
-vscodium-bin
-vscodium-bin-marketplace
 xdg-ninja
