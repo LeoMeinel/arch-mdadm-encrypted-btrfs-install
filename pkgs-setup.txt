@@ -134,7 +134,6 @@ virt-manager
 waybar
 webp-pixbuf-loader
 wget
-wireguard-tools
 wireplumber
 wl-clipboard
 wofi
