@@ -3,7 +3,7 @@
 # File: prepare.sh
 # Author: Leopold Meinel (leo@meinel.dev)
 # -----
-# Copyright (c) 2024 Leopold Meinel & contributors
+# Copyright (c) 2025 Leopold Meinel & contributors
 # SPDX ID: GPL-3.0-or-later
 # URL: https://www.gnu.org/licenses/gpl-3.0-standalone.html
 # -----
@@ -395,6 +395,9 @@ genfstab -U /mnt >>/mnt/etc/fstab
         sed -i "/$STRING0/s/$STRING1/$STRING1,noauto/" "$FILE"
         ## END sed
     }
+
+# Configure /mnt/etc/resolv.conf
+ln -sf ../run/systemd/resolve/stub-resolv.conf /mnt/etc/resolv.conf
 
 # Prepare /mnt/git/arch-install
 mkdir -p /mnt/git

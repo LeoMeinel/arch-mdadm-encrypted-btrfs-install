@@ -89,6 +89,7 @@ chown root:root /etc/doas.conf
 chmod 0400 /etc/doas.conf
 ## Configure random MAC address for WiFi in /etc/NetworkManager/conf.d/50-mac-random.conf
 chmod 644 /etc/NetworkManager/conf.d/50-mac-random.conf
+chmod 644 /etc/NetworkManager/conf.d/51-unmanaged.conf
 ## Configure pacman hooks in /etc/pacman.d/hooks
 DISK1="$(lsblk -npo PKNAME "$(findmnt -no SOURCE --target /efi)" | tr -d "[:space:]")"
 DISK1P2="$(lsblk -rnpo TYPE,NAME "$DISK1" | grep "part" | sed 's/part//' | sed -n '2p' | tr -d "[:space:]")"
@@ -597,7 +598,10 @@ pacman -Qq "snapper" >/dev/null 2>&1 &&
 pacman -Qq "sysstat" >/dev/null 2>&1 &&
     systemctl enable sysstat.service
 pacman -Qq "systemd" >/dev/null 2>&1 &&
-    systemctl enable systemd-boot-update.service
+    {
+        systemctl enable systemd-resolved.service
+        systemctl enable systemd-boot-update.service
+    }
 pacman -Qq "tlp-rdw" >/dev/null 2>&1 && pacman -Qq "networkmanager" >/dev/null 2>&1 &&
     systemctl enable NetworkManager-dispatcher.service
 pacman -Qq "tlp" >/dev/null 2>&1 &&

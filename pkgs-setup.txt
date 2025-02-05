@@ -117,6 +117,7 @@ swayidle
 swaync
 sysstat
 system-config-printer
+systemd-resolvconf
 thunar
 thunderbird
 tinyxxd
