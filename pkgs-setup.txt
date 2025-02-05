@@ -53,6 +53,7 @@ snapper
 sshfs
 starship
 sysstat
+systemd-resolvconf
 tinyxxd
 tokei
 tpm2-tools
