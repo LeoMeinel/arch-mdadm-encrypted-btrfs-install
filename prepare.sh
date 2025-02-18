@@ -355,26 +355,10 @@ pacman -Syy
 pacman -S --noprogressbar --noconfirm --needed lshw
 [[ -n "$DISK2" ]] &&
     echo "mdadm" >>"$SCRIPT_DIR/pkgs-prepare.txt"
-[[ -d "/proc/acpi/button/lid" ]] &&
-    {
-        echo "tlp"
-        echo "tlp-rdw"
-    } >>"$SCRIPT_DIR/pkgs-prepare.txt"
 lscpu | grep "Vendor ID:" | grep -q "GenuineIntel" &&
     echo "intel-ucode" >>"$SCRIPT_DIR/pkgs-prepare.txt"
 lscpu | grep "Vendor ID:" | grep -q "AuthenticAMD" &&
     echo "amd-ucode" >>"$SCRIPT_DIR/pkgs-prepare.txt"
-lshw -C display | grep "vendor:" | grep -q "Advanced Micro Devices, Inc." &&
-    {
-        echo "vulkan-radeon"
-        echo "xf86-video-amdgpu"
-    } >>"$SCRIPT_DIR/pkgs-prepare.txt"
-lshw -C display | grep "vendor:" | grep -q "Intel Corporation" &&
-    {
-        echo "intel-media-driver"
-        echo "vulkan-intel"
-        echo "xf86-video-intel"
-    } >>"$SCRIPT_DIR"/pkgs-prepare.txt
 pacstrap -K /mnt - <"$SCRIPT_DIR/pkgs-prepare.txt"
 
 # Configure /mnt/etc/fstab
