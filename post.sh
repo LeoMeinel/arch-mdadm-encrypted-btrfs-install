@@ -96,16 +96,6 @@ doas nft 'add rule ip filter input tcp flags psh / psh,ack counter drop'
 doas nft 'add rule ip filter input tcp flags 0x0 / fin,syn,rst,psh,ack,urg counter drop'
 ### Drop XMAS packets
 doas nft 'add rule ip filter input tcp flags fin,syn,rst,psh,ack,urg / fin,syn,rst,psh,ack,urg counter drop'
-### Drop excessive TCP RST packets
-doas nft 'add chain ip filter input_prerouting'
-doas nft 'add rule ip filter input tcp flags rst limit rate 2/second burst 2 packets counter jump input_prerouting'
-doas nft 'add rule ip filter input tcp flags rst counter drop'
-### Drop SYN-FLOOD packets
-doas nft 'add rule ip filter input ip protocol tcp ct state new limit rate 2/second burst 2 packets counter jump input_prerouting'
-doas nft 'add rule ip filter input ip protocol tcp ct state new counter drop'
-### Rate-limit UDP packets
-doas nft 'add rule ip filter input ip protocol udp ct state new limit rate 2/second burst 2 packets counter jump input_prerouting'
-doas nft 'add rule ip filter input ip protocol udp ct state new counter drop'
 ### Drop fragments
 doas nft 'add rule ip filter input ip frag-off & 0x1fff != 0 counter drop'
 doas nft 'add rule ip filter forward ip frag-off & 0x1fff != 0 counter drop'
@@ -116,6 +106,16 @@ doas nft 'add rule ip filter input ip protocol tcp ct state new tcp option maxse
 doas nft 'add rule ip filter input iifname != "lo" ip saddr 127.0.0.0/8 counter drop'
 ### Drop ICMP
 doas nft 'add rule ip filter input ip protocol icmp counter drop'
+### Drop excessive TCP RST packets
+doas nft 'add chain ip filter input_prerouting'
+doas nft 'add rule ip filter input tcp flags rst limit rate 2/second burst 2 packets counter jump input_prerouting'
+doas nft 'add rule ip filter input tcp flags rst counter drop'
+### Drop SYN-FLOOD packets
+doas nft 'add rule ip filter input ip protocol tcp ct state new limit rate 2/second burst 2 packets counter jump input_prerouting'
+doas nft 'add rule ip filter input ip protocol tcp ct state new counter drop'
+### Rate-limit UDP packets
+doas nft 'add rule ip filter input ip protocol udp ct state new limit rate 2/second burst 2 packets counter jump input_prerouting'
+doas nft 'add rule ip filter input ip protocol udp ct state new counter drop'
 ### Allow interface virbr0 (input_prerouting)
 doas nft 'add rule ip filter input_prerouting iifname "virbr0" udp dport 53 counter accept'
 doas nft 'add rule ip filter input_prerouting iifname "virbr0" udp dport 67 counter accept'
@@ -166,6 +166,12 @@ doas nft 'add rule ip6 filter input tcp flags psh / psh,ack counter drop'
 doas nft 'add rule ip6 filter input tcp flags 0x0 / fin,syn,rst,psh,ack,urg counter drop'
 ### Drop XMAS packets
 doas nft 'add rule ip6 filter input tcp flags fin,syn,rst,psh,ack,urg / fin,syn,rst,psh,ack,urg counter drop'
+### Drop SYN packets with suspicious MSS value
+doas nft 'add rule ip6 filter input meta l4proto tcp ct state new tcp option maxseg size != 536-65535 counter drop'
+### Block spoofed packets
+doas nft 'add rule ip6 filter input iifname != "lo" ip6 saddr ::1 counter drop'
+### Drop ICMP
+doas nft 'add rule ip6 filter input meta l4proto icmp counter drop'
 ### Drop excessive TCP RST packets
 doas nft 'add chain ip6 filter input_prerouting'
 doas nft 'add rule ip6 filter input tcp flags rst limit rate 2/second burst 2 packets counter jump input_prerouting'
@@ -176,12 +182,6 @@ doas nft 'add rule ip6 filter input meta l4proto tcp ct state new counter drop'
 ### Rate-limit UDP packets
 doas nft 'add rule ip6 filter input meta l4proto udp ct state new limit rate 2/second burst 2 packets counter jump input_prerouting'
 doas nft 'add rule ip6 filter input meta l4proto udp ct state new counter drop'
-### Drop SYN packets with suspicious MSS value
-doas nft 'add rule ip6 filter input meta l4proto tcp ct state new tcp option maxseg size != 536-65535 counter drop'
-### Block spoofed packets
-doas nft 'add rule ip6 filter input iifname != "lo" ip6 saddr ::1 counter drop'
-### Drop ICMP
-doas nft 'add rule ip6 filter input meta l4proto icmp counter drop'
 ### Allow interface virbr0 (input_prerouting)
 doas nft 'add rule ip6 filter input_prerouting iifname "virbr0" udp dport 53 counter accept'
 doas nft 'add rule ip6 filter input_prerouting iifname "virbr0" udp dport 67 counter accept'
